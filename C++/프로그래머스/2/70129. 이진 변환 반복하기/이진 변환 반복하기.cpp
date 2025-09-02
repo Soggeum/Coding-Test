@@ -1,20 +1,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <bitset>
 
 using namespace std;
-
-void new_str(string& s)
-{
-	int len = s.length();
-	string temp = "";
-    while (len) {
-        temp.push_back(len % 2 + '0');
-		len /= 2;
-	}
-	
-	s = string(temp.rbegin(), temp.rend());
-}
 
 vector<int> solution(string s) {
     int zero = 0, cnt = 0;
@@ -25,8 +14,9 @@ vector<int> solution(string s) {
         zero += s.end() - new_end;
         s.erase(new_end, s.end());
         cnt++;
-
-        new_str(s);
+    
+        s = bitset<20>{s.size()}.to_string();
+        s = s.substr(s.find('1'));
     }
     
     return {cnt, zero};
