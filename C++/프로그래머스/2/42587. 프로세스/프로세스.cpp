@@ -2,8 +2,6 @@
 #include <vector>
 #include <queue>
 
-// #include <iostream>
-
 using namespace std;
 
 int solution(vector<int> priorities, int location) {
@@ -45,7 +43,4 @@ int solution(vector<int> priorities, int location) {
             }
         }
     }
-    
-    
-    return 0;
 }
