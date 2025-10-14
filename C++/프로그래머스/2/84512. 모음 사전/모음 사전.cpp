@@ -7,11 +7,8 @@ using namespace std;
 
 int PreWordCnt(char first_char, int num) {
     static unordered_map<char, int> order = {{'A', 0},{'E', 1},{'I', 2},{'O',3},{'U', 4}};    
-    int result = 1;
-    for (int i = 1; i <= num; i++) {
-        result += pow(5, i);
-    }
-    return order[first_char] * result;
+
+    return order[first_char] * (pow(5, num + 1) - 1) / 4;
 }
 
 int solution(string word) {    
