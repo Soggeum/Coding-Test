@@ -39,16 +39,7 @@ int DFS(vector<int>& picks, int pick, const vector<string>& minerals, int idx, c
 
 int solution(vector<int> picks, vector<string> minerals) {
     int answer = 999999999, result = answer;
-    vector<vector<int>> table(3, vector<int>(3));
-    table[0][0] = 1;
-    table[0][1] = 1;
-    table[0][2] = 1;
-    table[1][0] = 5;
-    table[1][1] = 1;
-    table[1][2] = 1;
-    table[2][0] = 25;
-    table[2][1] = 5;
-    table[2][2] = 1;
+    vector<vector<int>> table = {{1, 1, 1}, {5, 1, 1}, {25, 5, 1}};
     
     for (int i = 0; i < picks.size(); ++i) {
         if (picks[i] > 0) {
