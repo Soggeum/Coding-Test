@@ -28,8 +28,7 @@ vector<double> solution(int k, vector<vector<int>> ranges) {
         }
         
         a = range[0]; b = range[1];
-        if (b <= 0)
-            b = n + b;
+        b = n + b;
         
         if (a > b) {
                 answer.push_back(-1);
