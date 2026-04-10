@@ -8,8 +8,8 @@ long long Caculate(double a, double b) {
     if (b == 0)
         return floor(a) * 2LL + 1;
     
-    long long A = floor(a);  // ✅ 명시적 floor
-    long long B = ceil(b);   // ✅ 명시적 ceil
+    long long A = floor(a);  // 명시적 floor
+    long long B = ceil(b);   // 명시적 ceil
     
     return (A - B + 1) * 2LL;
 }
