@@ -1,33 +1,33 @@
 #include <string>
 #include <vector>
-#include <set>
+#include <queue>
 
 using namespace std;
 
 long long solution(int n, vector<int> works) {
     long long answer = 0;
-    multiset<int> Table;
+    priority_queue<int> Table;
     for (int w : works)
     {
-        Table.insert(w);
+        Table.push(w);
     }
     
     while (n)
     {
-        int Back = *Table.rbegin();
-        if (Back == 0)
+        int Front = Table.top();
+        if (Front == 0)
         {
             return 0;
         }
-        Table.erase(--Table.end());
-        Back--;
-        Table.insert(Back);        
-        
+        Table.pop();
+        Table.push(Front - 1);
         n--;
     }
-    for (int w : Table)
+    
+    while(!Table.empty())
     {
-        answer += w * w;
+        answer += Table.top() * Table.top();
+        Table.pop();
     }
     return answer;
 }
