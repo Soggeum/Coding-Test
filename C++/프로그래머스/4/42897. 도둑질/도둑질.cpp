@@ -6,10 +6,6 @@ using namespace std;
 
 int solution(vector<int> money) {
     int N = money.size();
-    if (N == 3)
-    {
-        return *max_element(money.begin(), money.end());
-    }
     
     vector<int> DP(N);
     DP[0] = money[0];
