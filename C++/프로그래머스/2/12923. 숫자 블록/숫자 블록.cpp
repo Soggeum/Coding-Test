@@ -30,11 +30,11 @@ int FindBlock(int num)
 }
 
 vector<int> solution(long long begin, long long end) {
-    vector<int> answer(end - begin + 1);
+    vector<int> answer;
+    answer.reserve(end - begin + 1);
     for (int num = begin; num <= end; num++)
     {
-        int Block = FindBlock(num);
-        answer[num - begin] = Block;
+        answer.push_back(FindBlock(num));
     }
     
     return answer;
