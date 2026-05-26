@@ -2,8 +2,6 @@
 #include <vector>
 #include <map>
 
-#include <iostream>
-
 using namespace std;
 
 struct TableNode
@@ -13,7 +11,8 @@ struct TableNode
 
 struct TreeNode
 {
-    int Num, X, Left, Right;
+    int Num, X;
+    int Left = -1, Right = -1;
 };
 
 void ConnectToParent(vector<TreeNode>& Tree, int ChildX, int ChildIdx)
@@ -77,14 +76,14 @@ vector<vector<int>> solution(vector<vector<int>> nodeinfo) {
     vector<TreeNode> Tree;
     Tree.reserve(nodeinfo.size());
     auto it = Table.rbegin();
-    Tree.push_back({it->second[0].Num, it->second[0].X, -1, -1});
+    Tree.push_back({it->second[0].Num, it->second[0].X});
     ++it;
     
     for (; it != Table.rend(); it++)
     {
         for (const TableNode& node : it->second)
         {
-            Tree.push_back({node.Num, node.X, -1, -1});
+            Tree.push_back({node.Num, node.X});
             ConnectToParent(Tree, node.X, Tree.size() - 1);
         }
     }
