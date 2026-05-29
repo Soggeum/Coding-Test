@@ -1,7 +1,5 @@
 #include <string>
 #include <vector>
-#include <queue>
-#include <algorithm>
 
 using namespace std;
 
@@ -43,31 +41,25 @@ string SecToTime(int Sec)
 }
 
 string solution(string play_time, string adv_time, vector<string> logs) {
-    int TotalTime = TimeToSec("99:59:59");    
-    sort(logs.begin(), logs.end());
-    priority_queue<int, vector<int>, greater<int>> q;
+    int TotalTime = TimeToSec("99:59:59");
     vector<int> TimeTable(TotalTime);
-    int count = 0, Time = 0, idx = 0;
-    for (; Time < TotalTime; Time++)
+    for (const string& log : logs)
     {
-        while (idx < logs.size() && Time == TimeToSec(logs[idx].substr(0, 8)))
-        {
-            count++;
-            q.push(TimeToSec(logs[idx].substr(9)));
-            idx++;
-        }
-        while (!q.empty() && q.top() == Time)
-        {
-            count--;
-            q.pop();
-        }
-        
-        TimeTable[Time] = count;
+        string Start = log.substr(0, 8);
+        string End = log.substr(9);
+        TimeTable[TimeToSec(Start)]++;
+        TimeTable[TimeToSec(End)]--;
+    }
+    
+    for (int i = 1; i < TimeTable.size(); i++)
+    {
+        TimeTable[i] += TimeTable[i - 1];
     }
     
     int k = TimeToSec(adv_time);
     long long PlayCount = 0;
-    for (Time = 0; Time < k; Time++)
+    int Time = 0;
+    for (; Time < k; Time++)
     {
         PlayCount += TimeTable[Time];
     }
@@ -83,6 +75,6 @@ string solution(string play_time, string adv_time, vector<string> logs) {
             InitTime = Time - k + 1;
         }
     }
-        
+    
     return SecToTime(InitTime);
 }
