@@ -5,29 +5,29 @@
 using namespace std;
 
 long long solution(int n, vector<int> works) {
-    long long answer = 0;
-    priority_queue<int> Table;
-    for (int w : works)
+    priority_queue<int> Works;
+    for (int work : works)
     {
-        Table.push(w);
+        Works.push(work);
     }
     
-    while (n)
+    int Front;
+    for (int i = 0; i < n; i++)
     {
-        int Front = Table.top();
+        Front = Works.top();
         if (Front == 0)
         {
             return 0;
         }
-        Table.pop();
-        Table.push(Front - 1);
-        n--;
+        Works.pop();
+        Works.push(--Front);
     }
     
-    while(!Table.empty())
+    long long answer = 0, Top;
+    while(!Works.empty())
     {
-        answer += Table.top() * Table.top();
-        Table.pop();
+        Top = Works.top();  Works.pop();
+        answer += Top * Top;
     }
     return answer;
 }
