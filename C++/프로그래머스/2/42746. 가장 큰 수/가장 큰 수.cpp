@@ -4,23 +4,27 @@
 
 using namespace std;
 
-bool comp(const int&a, const int& b) {
-    return to_string(a) + to_string(b) > to_string(b) + to_string(a);
-}
+struct comp
+{
+    bool operator()(const int& a, const int& b) const
+    {
+        string A = to_string(a), B = to_string(b);
+        return A + B > B + A;
+    }  
+};
 
 string solution(vector<int> numbers) {
-    sort(numbers.begin(), numbers.end(), comp);
-    
-    string answer = "";
-    int zero_cnt = 0;
-    for (int number : numbers) {
-        answer.append(to_string(number));
-        if (number == 0)
-            zero_cnt++;
+    sort(numbers.begin(), numbers.end(), comp());
+    if (numbers[0] == 0)
+    {
+        return "0";
     }
     
-    if (zero_cnt == answer.size())
-        return "0";
+    string answer = "";
+    for (int n : numbers)
+    {
+        answer.append(to_string(n));
+    }
     
     return answer;
 }
