@@ -4,15 +4,16 @@
 using namespace std;
 
 int solution(int n, vector<int> money) {
-    vector<int> dp(n + 1);
-    dp[0] = 1;
+    vector<int> DP(n + 1);
+    DP[0] = 1;
+    
     for (int m : money)
     {
-        for (int i = m; i <= n; i++)
+        for (int i = m; i < n + 1; i++)
         {
-            dp[i] += dp[i - m];
-            dp[i] %= 1000000007;
+            DP[i] += DP[i - m];
         }
     }
-    return dp[n];
+    
+    return DP[n];
 }
