@@ -3,9 +3,9 @@
 
 using namespace std;
 
-int solution(int n, vector<vector<int>> results) {
-    vector<vector<int>> Table(n + 1, vector<int>(n + 1, 0));
-    for (const vector<int>& result : results)
+int solution(int n, vector<vector<int>> results) {    
+    vector<vector<int>> Table(n + 1, vector<int>(n + 1));
+    for(const vector<int>& result : results)
     {
         Table[result[0]][result[1]] = 1;
         Table[result[1]][result[0]] = -1;
@@ -20,31 +20,32 @@ int solution(int n, vector<vector<int>> results) {
                 if (Table[i][k] == 1 && Table[k][j] == 1)
                 {
                     Table[i][j] = 1;
+                    Table[j][i] = -1;
                 }
-                if (Table[i][k] == -1 && Table[k][j] == -1)
+                else if (Table[i][k] == -1 && Table[k][j] == -1)
                 {
                     Table[i][j] = -1;
+                    Table[j][i] = 1;
                 }
             }
         }
     }
     
-    int answer = 0, temp;
+    int answer = 0, WinLose;
     for (int i = 1; i <= n; i++)
     {
-        temp = 0;
+        WinLose = 0;
         for (int j = 1; j <= n; j++)
         {
             if (Table[i][j])
             {
-                temp++;
+                WinLose++;
             }
         }
-        if (temp == n - 1)
+        if (WinLose == n - 1)
         {
             answer++;
         }
     }
-    
     return answer;
-}             
+}
