@@ -1,21 +1,42 @@
 #include <string>
 #include <vector>
 
+//  1   1
+//  2   2
+//  10  4
+//  11  11
+//  12  12
+//  20  14
+
+//  100 24
+
+// 101  41
+
 using namespace std;
 
-string solution(int n) {
-    string answer = "";
-    vector<int> Left = {4, 1, 2};
-    while(n)
+string MakeThree(int n)
+{
+    string Res;
+    while (n)
     {
-        int L = n % 3;
-        n /= 3;
-        if (L == 0)
+        int Remainder = n % 3;
+        if (Remainder)
         {
+            Res.push_back(n % 3 + '0');
+            n /= 3;
+        }
+        else
+        {
+            Res.push_back('4');
+            n /= 3;
             n--;
         }
-        answer.push_back('0' + Left[L]);
+        
     }
-    
-    return string(answer.rbegin(), answer.rend());
+    return string(Res.rbegin(), Res.rend());
+}
+
+string solution(int n) {
+    string Three = MakeThree(n);
+    return Three;
 }
