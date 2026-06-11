@@ -3,34 +3,17 @@
 
 using namespace std;
 
-int DFS(string& str, int n, int Left, int Right)
-{
-    if (Left == n && Right == n)
-    {
-        return 1;
-    }
-    if (Left < Right)
-    {
-        return 0;
-    }
-    if (Left > n || Right > n)
-    {
-        return 0;
-    }
-    
-    int Res = 0;
-    str.push_back('(');
-    Res += DFS(str, n, Left + 1, Right);
-    str.pop_back();
-    
-    str.push_back(')');
-    Res += DFS(str, n, Left, Right + 1);
-    str.pop_back();
-    
-    return Res;
-}
-
 int solution(int n) {
-    string str = "";    
-    return DFS(str, n, 0, 0);
+    vector<int> DP(n + 1, 0);
+    DP[0] = 1;
+    DP[1] = 1;
+    for (int i = 2; i <= n; i++)
+    {
+        for (int j = 0; j < i; j++)
+        {
+            DP[i] += DP[j] * DP[i - j - 1];
+        }
+    }
+    
+    return DP[n];
 }
