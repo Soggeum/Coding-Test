@@ -3,29 +3,31 @@
 
 using namespace std;
 
-static int answer;
-static vector<int> numbers;
-static int target;
-
-void DFS(int idx, int result)
-{   
-    if (idx >= numbers.size())
+void DFS(const vector<int>& numbers, const int& target, int& idx, int& sum, int& answer)
+{
+    if (idx == numbers.size())
     {
-        if (result == target) {
-            answer++;
+        if (sum == target)
+        {
+            answer++;          
         }
         return;
     }
-    DFS(idx + 1, result + numbers[idx]);
-    DFS(idx + 1, result - numbers[idx]);
+    
+    sum += numbers[idx];
+    idx++;
+    DFS(numbers, target, idx, sum, answer);
+    idx--;
+    sum -= numbers[idx] * 2;
+    idx++;
+    DFS(numbers, target, idx, sum, answer);
+    idx--;
+    sum += numbers[idx];
 }
 
-int solution(vector<int> In_numbers, int In_target) {
-    answer = 0;
-    numbers = In_numbers;
-    target = In_target;
-    
-    DFS(0, 0);
-    
+int solution(vector<int> numbers, int target) {
+    int answer = 0;
+    int idx = 0, sum = 0;
+    DFS(numbers, target, idx, sum, answer);
     return answer;
 }
