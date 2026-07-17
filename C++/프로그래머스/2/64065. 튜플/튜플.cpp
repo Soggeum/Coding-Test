@@ -1,58 +1,48 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <unordered_set>
 
 using namespace std;
 
-bool comp(const vector<int>& a, const vector<int>& b)
-{
-    return a.size() < b.size();
-}
-
 vector<int> solution(string s) {
-    vector<vector<int>> S;
-    vector<int> SElem;
-    string temp;
-    for (char& c : s)
+    vector<unordered_set<int>> Table(501);
+    unordered_set<int> Temp;
+    string TempElem;
+    for (int i = 2; i < s.size(); i++)
     {
-        if (isdigit(c))
+        if (s[i] == '}')
         {
-            temp.push_back(c);
+            Temp.insert(stoi((TempElem)));
+            Table[Temp.size()] = Temp;
+            TempElem.clear();
+            Temp.clear();
+            i += 2;
         }
-        else if (c == ',')
+        else if (s[i] == ',')
         {
-            if (!temp.empty())
-            {
-                SElem.push_back(stoi(temp));
-                temp.clear();
-            }
+            Temp.insert(stoi(TempElem));
+            TempElem.clear();
         }
-        else if (c == '}')
+        else
         {
-            if (!temp.empty())
-            {
-                SElem.push_back(stoi(temp));
-                S.push_back(SElem);
-                temp.clear();
-                SElem.clear();
-            }
+            TempElem.push_back(s[i]);
         }
     }
     
-    sort(S.begin(), S.end(), comp);
-    
-    unordered_set<int> us;
+    vector<bool> Appear(100001);
     vector<int> answer;
-    
-    for (const vector<int>& SElem : S)
+    for (int i = 1; i < Table.size(); i++)
     {
-        for (const int& elem : SElem)
+        if (Table[i].empty())
         {
-            if (us.find(elem) == us.end())
+            break;
+        }
+        for (int value : Table[i])
+        {
+            if (!Appear[value])
             {
-                answer.push_back(elem);
-                us.insert(elem);
+                answer.push_back(value);
+                Appear[value] = true;
                 break;
             }
         }
