@@ -5,18 +5,15 @@
 using namespace std;
 
 vector<int> solution(int n, vector<string> words) {
-    vector<int> answer(2, 0);
-    unordered_set<string> speak = {words[0]};
-    
-    for (int i = 1; i < words.size(); i++) {
-        const string& word = words[i];    
-        if ((speak.find(word) != speak.end()) || (words[i][0] != words[i-1].back())) {
-            answer[0] = (i % n + 1);
-            answer[1] = (i / n + 1);
-            break;
-        }   
-        speak.insert(word);
+    unordered_set<string> Table = {words[0]};
+    for (int i = 1; i < words.size(); i++)
+    {
+        if (words[i][0] != words[i - 1].back() || Table.find(words[i]) != Table.end())
+        {
+            return {i % n + 1, i / n + 1};
+        }
+        Table.insert(words[i]);
     }
 
-    return answer;
+    return {0, 0};
 }
