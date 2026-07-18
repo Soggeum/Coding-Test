@@ -1,15 +1,20 @@
-#include <iostream>
-
 using namespace std;
 
 int solution(int n)
 {
-    int answer = 0;
+    int ans = 0;
     while (n)
     {
-        n = n & (n - 1);
-        answer++;
+        if (n & 1)
+        {
+            ans++;
+            n--;
+        }
+        else
+        {
+            n = n >> 1;
+        }
     }
-    
-    return answer;
+
+    return ans;
 }
