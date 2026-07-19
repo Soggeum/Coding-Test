@@ -1,26 +1,27 @@
-// Multiset, 이분탐색, Deque로도 풀어보기
-
-
 #include <string>
 #include <vector>
 #include <set>
 
 using namespace std;
 
-int solution(vector<int> stones, int k) { 
-    multiset<int> Targets;
-    int low = 0, high = k;
-    for (int i = 0; i < k; i++)
+int solution(vector<int> stones, int k) {
+    multiset<int> ms;
+    int Start = 0, End = k, answer = 200000001;
+    for (int i = Start; i < End; i++)
     {
-        Targets.insert(stones[i]);
+        ms.insert(stones[i]);
     }
-    int answer = *Targets.rbegin();
     
-    for (; high < stones.size(); low++, high++)
+    while(End <= stones.size())
     {
-        Targets.erase(Targets.find(stones[low]));
-        Targets.insert(stones[high]);
-        answer = min(answer, *Targets.rbegin());
+        answer = min(answer, *ms.rbegin());
+        auto it = ms.find(stones[Start++]);        
+        ms.erase(it);
+        if (End == stones.size())
+        {
+            break;
+        }
+        ms.insert(stones[End++]);
     }
     
     return answer;
