@@ -1,46 +1,66 @@
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <list>
 #include <algorithm>
+#include <unordered_map>
+
+#include <iostream>
 
 using namespace std;
 
-void DFS(vector<string>& answer, unordered_map<string, list<string>>& Table, int n, bool& bIsFinished)
+struct Node
 {
-    if (answer.size() == n) {
-        bIsFinished = true;
+    string Dest;
+    bool Visited;  
+};
+
+bool comp(const Node& a, const Node& b)
+{
+    return a.Dest < b.Dest;
+}
+
+void DFS(vector<string>& answer, unordered_map<string, vector<Node>>& Table, const int& TicketNum, bool& flag)
+{
+    if (flag)
+    {
         return;
     }
-
-    string start = answer.back();
-    auto& destList = Table[start];
-
-    for (auto it = destList.begin(); it != destList.end(); ) {
-        string dest = *it;
-        it = destList.erase(it); 
-        answer.push_back(dest);
-
-        DFS(answer, Table, n, bIsFinished);
-
-        if (bIsFinished) return;
-        
-        answer.pop_back();
-        destList.insert(it, dest); 
+    if (answer.size() == TicketNum + 1)
+    {
+        flag = true;
+        return;
+    }
+    
+    string Curr = answer.back();
+    for (Node& node : Table[Curr])
+    {
+        if (!(node.Visited))
+        {
+            node.Visited = true;
+            answer.push_back(node.Dest);
+            DFS(answer, Table, TicketNum, flag);
+            if (flag)
+            {
+                return;
+            }
+            node.Visited = false;
+            answer.pop_back();
+        }
     }
 }
 
 vector<string> solution(vector<vector<string>> tickets) {
-    sort(tickets.begin(), tickets.end());
-    
-    unordered_map<string, list<string>> Table;
-    for (const auto& t : tickets) {
-        Table[t[0]].push_back(t[1]);
+    unordered_map<string, vector<Node>> Table;
+    for (const vector<string>& t : tickets)
+    {
+        Table[t[0]].push_back({t[1], false});
     }
-
+    for (auto& it : Table)
+    {
+        sort(it.second.begin(), it.second.end(), comp);
+    }
+    
     vector<string> answer = {"ICN"};
-    bool bIsFinished = false;
-    DFS(answer, Table, tickets.size() + 1, bIsFinished);
-
+    bool flag = false;
+    DFS(answer, Table, tickets.size(), flag);
     return answer;
 }
