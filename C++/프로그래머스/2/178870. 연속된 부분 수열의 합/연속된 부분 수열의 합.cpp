@@ -4,29 +4,31 @@
 using namespace std;
 
 vector<int> solution(vector<int> sequence, int k) {
-    int low = 0, high = 0, n = sequence.size();
-    int sum = sequence[0];
-    vector<int> answer = {0, n - 1};
-    while (low <= high && high < n) {
-        if (sum < k) {
-            high++;
-            if (high >= n)
+    vector<int> answer = {0, static_cast<int>(sequence.size() - 1)};
+    int Start = 0, End = 0, Sum = 0;
+    while (Start <= End && End <= sequence.size())
+    {
+        if (Sum < k)
+        {
+            if (End == sequence.size())
+            {
                 break;
-            sum += sequence[high];
-        }
-        else if (sum > k) {
-            sum -= sequence[low];
-            low++;
-        }
-        else {
-            if (high - low < answer[1] - answer[0]) {
-                answer[0] = low;
-                answer[1] = high;
             }
-            sum -= sequence[low];
-            low++;
+            Sum += sequence[End++];
+        }
+        else if (Sum > k)
+        {
+            Sum -= sequence[Start++];
+        }
+        else
+        {
+            if (End - 1 - Start < answer[1] - answer[0])
+            {
+                answer[0] = Start;
+                answer[1] = End - 1;
+            }
+            Sum -= sequence[Start++];
         }
     }
-    
     return answer;
 }
