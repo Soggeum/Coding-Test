@@ -1,42 +1,31 @@
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <cmath>
 
 using namespace std;
 
-#include <iostream>
-
 vector<int> solution(int m, int n, int startX, int startY, vector<vector<int>> balls) {
-    vector<int> answer(balls.size());
-    int TarX, TarY, Dist, MinDist;
-    for (int i = 0; i < balls.size(); i++)
+    vector<int> answer;
+    for (const vector<int> ball : balls)
     {
-        TarX = balls[i][0];
-        TarY = balls[i][1];
-        MinDist = 99999999;
-        
-        if (!(startX == TarX && startY < TarY)) 
+        int X = ball[0], Y = ball[1];
+        int Result = 2000000000;
+        if (!(startX == X && startY > Y))
         {
-            Dist = pow(TarX - startX, 2) + pow(2 * n - startY - TarY, 2);
-            MinDist = min(MinDist, Dist);
+            Result = min(Result, (startX - X) * (startX - X) + (Y + startY) * (Y + startY));
         }
-        if (!(startX == TarX && startY > TarY)) 
+        if (!(startX == X && startY < Y))
         {
-            Dist = pow(TarX - startX, 2) + pow(startY + TarY, 2);
-            MinDist = min(MinDist, Dist);
+            Result = min(Result, (startX - X) * (startX - X) + (n - Y + n - startY) * (n - Y + n - startY));
         }
-        if (!(startY == TarY && startX < TarX)) 
+        if (!(startY == Y && startX > X))
         {
-            Dist = pow(TarY - startY, 2) + pow(2 * m - startX - TarX, 2);
-            MinDist = min(MinDist, Dist);
+            Result = min(Result, (startX + X) * (startX + X) + (Y - startY) * (Y - startY));
         }
-        if (!(startY == TarY && startX > TarX)) 
+        if (!(startY == Y && startX < X))
         {
-            Dist = pow(TarY - startY, 2) + pow(startX + TarX, 2);
-            MinDist = min(MinDist, Dist);
+            Result = min(Result, (m - startX + m - X) * (m - startX + m - X) + (Y - startY) * (Y - startY));
         }
-        answer[i] = MinDist;
+        answer.push_back(Result);
     }
     
     return answer;
