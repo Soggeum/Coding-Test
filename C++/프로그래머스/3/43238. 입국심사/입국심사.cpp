@@ -4,27 +4,25 @@
 using namespace std;
 
 long long solution(int n, vector<int> times) {
-    long long start = 1, end = static_cast<long long>(100000000) * 1000000000, mid;
-    
-    long long Possible;
+    long long start = 0, end = 1000000000000000000, answer = 1000000000000000000;
     while (start <= end)
     {
-        mid = (start + end) / 2;
-        Possible = 0;
-        for (int time : times)
+        long long mid = (start + end) / 2, total = 0;
+        for (int t : times)
         {
-            Possible += mid / time;
+            total += mid / t;
         }
-        
-        if (Possible < n)
+        if (total < n)
         {
             start = mid + 1;
         }
-        else
+        else if (total >= n)
         {
+            answer = min(answer, mid);
             end = mid - 1;
         }
     }
-    
-    return start;
+
+    return answer;
 }
+
