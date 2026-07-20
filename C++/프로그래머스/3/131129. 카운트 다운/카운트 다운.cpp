@@ -1,114 +1,72 @@
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 using namespace std;
 
 struct Node
 {
-    int ThrowCount = 100001;
-    int Single;
-    int Bull;    
+    int Throw, SingleBull;    
+    
+    bool operator<(const Node& other) const
+    {
+        if (Throw == other.Throw)
+        {
+            return SingleBull < other.SingleBull;
+        }
+        return Throw > other.Throw;
+    }
 };
 
-bool IsElse(int n)
-{
-    for (int i = 7; i <= 20; i++)
-    {
-        if (i * 2 == n || i * 3 == n)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 vector<int> solution(int target) {
-    unordered_map<string, vector<int>> DartTable;
-    DartTable["Single"] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-    DartTable["Bull"] = {50};
-    for (int i = 21; i <= 60; i++)
+    vector<int> SB;
+    for (int i = 1; i <= 20; i++)
     {
-        if (IsElse(i))
+        SB.push_back(i);
+    }
+    SB.push_back(50);
+    
+    vector<int> DT;
+    for (int i = 0; i < 20; i++)
+    {
+        DT.push_back(SB[i] * 2);
+        DT.push_back(SB[i] * 3);
+    }
+    
+    vector<Node> DP(target + 1, {100000, 100000});
+    for (int dt : DT)
+    {
+        if (dt <= target)
         {
-            DartTable["Else"].push_back(i);
+            DP[dt] = {1, 0};
+        }
+    }
+    for (int sb : SB)
+    {
+        if (sb <= target)
+        {
+            DP[sb] = {1, 1};
         }
     }
     
-    vector<Node> DP(100001);
-    for (int i : DartTable["Single"])
+    for (int i = 1; i < target; i++)
     {
-        DP[i] = {1, 1, 0};
-    }
-    if (target >= 50)
-    {
-        DP[50] = {1, 0, 1};
-    }
-    for (int i : DartTable["Else"])
-    {
-        if (i >= DP.size())
+        for (int sb : SB)
         {
-            break;
+            if (i + sb <= target)
+            {
+                Node NewNode = {DP[i].Throw + 1, DP[i].SingleBull + 1};
+                DP[i + sb] = max(DP[i + sb], NewNode);
+            }            
         }
-        DP[i] = {1, 0, 0};
-    }
-    
-    for (int i = 1; i <= target; i++)
-    {
-        for (int j : DartTable["Single"])
+        for (int dt : DT)
         {
-            if (i + j > target)
+            if (i + dt <= target)
             {
-                break;
-            }
-            
-            Node NewNode = {DP[i].ThrowCount + 1, DP[i].Single + 1, DP[i].Bull};
-            if (NewNode.ThrowCount < DP[i + j].ThrowCount)
-            {
-                DP[i + j] = NewNode;
-            }
-            else if (NewNode.ThrowCount == DP[i + j].ThrowCount && NewNode.Single + NewNode.Bull > DP[i + j].Single + DP[i + j].Bull)
-            {
-                DP[i + j] = NewNode;
-            }
-        }
-        
-        for (int j : DartTable["Bull"])
-        {
-            if (i + j > target)
-            {
-                break;
-            }
-            
-            Node NewNode = {DP[i].ThrowCount + 1, DP[i].Single, DP[i].Bull + 1};
-            if (NewNode.ThrowCount < DP[i + j].ThrowCount)
-            {
-                DP[i + j] = NewNode;
-            }
-            else if (NewNode.ThrowCount == DP[i + j].ThrowCount && NewNode.Single + NewNode.Bull > DP[i + j].Single + DP[i + j].Bull)
-            {
-                DP[i + j] = NewNode;
-            }
-        }
-        
-        for (int j : DartTable["Else"])
-        {
-            if (i + j > target)
-            {
-                break;
-            }
-            
-            Node NewNode = {DP[i].ThrowCount + 1, DP[i].Single, DP[i].Bull};
-            if (NewNode.ThrowCount < DP[i + j].ThrowCount)
-            {
-                DP[i + j] = NewNode;
-            }
-            else if (NewNode.ThrowCount == DP[i + j].ThrowCount && NewNode.Single + NewNode.Bull > DP[i + j].Single + DP[i + j].Bull)
-            {
-                DP[i + j] = NewNode;
-            }
+                Node NewNode = {DP[i].Throw + 1, DP[i].SingleBull};
+                DP[i + dt] = max(DP[i + dt], NewNode);
+            }            
         }
     }
     
-    return {DP[target].ThrowCount, DP[target].Single + DP[target].Bull};
+    return {DP[target].Throw, DP[target].SingleBull};
 }
