@@ -5,28 +5,33 @@ using namespace std;
 
 string solution(string number, int k) {
     string answer = "";
-    for (char n : number)
+    for (char c : number)
     {
         while (k && !answer.empty())
         {
-            char top = answer.back();
-            if (top < n)
+            char back = answer.back();
+            if (back < c)
             {
-                answer.pop_back();
                 k--;
+                answer.pop_back();
             }
             else
             {
                 break;
             }
         }
-        answer.push_back(n);
+        answer.push_back(c);
     }
     
     while (k)
     {
         answer.pop_back();
         k--;
+    }
+    
+    if (answer[0] == '0')
+    {
+        return "0";
     }
     return answer;
 }
