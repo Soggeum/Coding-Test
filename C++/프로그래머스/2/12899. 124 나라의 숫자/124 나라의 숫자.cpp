@@ -4,7 +4,7 @@
 using namespace std;
 
 string solution(int n) {
-    string res;
+    string answer = "";
     while (n)
     {
         int r = n % 3;
@@ -14,8 +14,8 @@ string solution(int n) {
             r = 4;
             n--;
         }
-        res.push_back(r + '0');
+        answer.push_back(r + '0');
     }
     
-    return string(res.rbegin(), res.rend());
+    return string(answer.rbegin(), answer.rend());
 }
