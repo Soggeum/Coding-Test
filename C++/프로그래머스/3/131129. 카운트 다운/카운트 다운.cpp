@@ -6,45 +6,32 @@ using namespace std;
 struct Node
 {
     int Throw, SingleBull;    
-    
-    bool operator<(const Node& other) const
-    {
-        if (Throw == other.Throw)
-        {
-            return SingleBull < other.SingleBull;
-        }
-        return Throw > other.Throw;
-    }
 };
 
 vector<int> solution(int target) {
+    vector<Node> DP(target + 1, {target + 1, 0});
     vector<int> SB;
+    vector<int> DT;
     for (int i = 1; i <= 20; i++)
     {
         SB.push_back(i);
+        DT.push_back(i * 2);
+        DT.push_back(i * 3);
     }
     SB.push_back(50);
     
-    vector<int> DT;
-    for (int i = 0; i < 20; i++)
-    {
-        DT.push_back(SB[i] * 2);
-        DT.push_back(SB[i] * 3);
-    }
-    
-    vector<Node> DP(target + 1, {100000, 100000});
     for (int dt : DT)
     {
-        if (dt <= target)
+        if (dt < DP.size())
         {
-            DP[dt] = {1, 0};
+            DP[dt] = {1, 0};            
         }
     }
     for (int sb : SB)
     {
-        if (sb <= target)
+        if (sb < DP.size())
         {
-            DP[sb] = {1, 1};
+            DP[sb] = {1, 1};            
         }
     }
     
@@ -52,21 +39,39 @@ vector<int> solution(int target) {
     {
         for (int sb : SB)
         {
-            if (i + sb <= target)
+            int NewScore = i + sb;
+            if (NewScore <= target)
             {
-                Node NewNode = {DP[i].Throw + 1, DP[i].SingleBull + 1};
-                DP[i + sb] = max(DP[i + sb], NewNode);
-            }            
+                if (DP[NewScore].Throw > DP[i].Throw + 1)
+                {
+                    DP[NewScore].Throw = DP[i].Throw + 1;
+                    DP[NewScore].SingleBull = DP[i].SingleBull + 1;
+                }
+                else if (DP[NewScore].Throw == DP[i].Throw + 1)
+                {
+                    DP[NewScore].SingleBull = max(DP[NewScore].SingleBull, DP[i].SingleBull + 1);
+                }
+            }
         }
+        
         for (int dt : DT)
         {
-            if (i + dt <= target)
+            int NewScore = i + dt;
+            if (NewScore <= target)
             {
-                Node NewNode = {DP[i].Throw + 1, DP[i].SingleBull};
-                DP[i + dt] = max(DP[i + dt], NewNode);
-            }            
+                if (DP[NewScore].Throw > DP[i].Throw + 1)
+                {
+                    DP[NewScore].Throw = DP[i].Throw + 1;
+                    DP[NewScore].SingleBull = DP[i].SingleBull;
+                }
+                else if (DP[NewScore].Throw == DP[i].Throw + 1)
+                {
+                    DP[NewScore].SingleBull = max(DP[NewScore].SingleBull, DP[i].SingleBull);
+                }
+            }
         }
     }
+    
     
     return {DP[target].Throw, DP[target].SingleBull};
 }
