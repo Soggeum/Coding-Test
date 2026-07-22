@@ -5,7 +5,7 @@ using namespace std;
 
 string solution(int n) {
     string answer = "";
-    while (n)
+    while(n)
     {
         int r = n % 3;
         n /= 3;
@@ -14,8 +14,7 @@ string solution(int n) {
             r = 4;
             n--;
         }
-        answer.push_back(r + '0');
+        answer.push_back('0' + r);
     }
-    
     return string(answer.rbegin(), answer.rend());
 }
