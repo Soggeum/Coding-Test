@@ -2,12 +2,12 @@ using namespace std;
 
 int solution(int n)
 {
-    int ans = 0;
+    int answer = 0;
     while (n)
     {
         if (n & 1)
         {
-            ans++;
+            answer++;
             n--;
         }
         else
@@ -15,6 +15,5 @@ int solution(int n)
             n = n >> 1;
         }
     }
-
-    return ans;
+    return answer;
 }
