@@ -6,36 +6,36 @@ using namespace std;
 
 bool comp(const vector<int>& a, const vector<int>& b)
 {
-    if (a[0] == b[0])
+    if (a[0] != b[0])
     {
-        return a[1] < b[1];
+        return a[0] > b[0];
     }
-    return a[0] > b[0];
+    return a[1] < b[1];
 }
 
 int solution(vector<vector<int>> scores) {
-    const vector<int> wanho = scores[0];
+    vector<int> wh = scores[0];
+    int wh_score = scores[0][0] + scores[0][1];
     sort(scores.begin(), scores.end(), comp);
-    
-    int answer = 1, PeerMax = 0;
-    for (const vector<int>& s : scores)
+    int answer = 1, MaxPeer = 0;
+    for (const vector<int>& sc : scores)
     {
-        if (s[1] < PeerMax)
+        if (wh == sc)
         {
-            if (s == wanho)
+            if (sc[1] < MaxPeer)
             {
                 return -1;
             }
+            continue;
         }
-        else
+        if (sc[1] >= MaxPeer)
         {
-            PeerMax = max(PeerMax, s[1]);
-            if (s[0] + s[1] > wanho[0] + wanho[1])
+            if (sc[0] + sc[1] > wh_score)
             {
-                answer++;
+                answer++;                
             }
+            MaxPeer = sc[1];
         }
-        
     }
     
     return answer;
