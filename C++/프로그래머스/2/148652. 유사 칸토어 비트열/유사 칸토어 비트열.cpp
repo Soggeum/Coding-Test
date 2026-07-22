@@ -4,44 +4,44 @@
 
 using namespace std;
 
-vector<long long> FivePow(21, 1);
-vector<long long> FourPow(21, 1);
+vector<long long> PowFive(21, 5);
+vector<long long> PowFour(21, 4);
 
-long long CountFromStart(long long n, long long End)
+long long OneCount(int n, long long i)
 {
-    if (n == 1) 
+    if (n == 1)
     {
-        if (End < 3) return End;
-        else return End - 1;
+        return i < 3 ? i : i - 1;
     }
+    //int r = (i - 1) / static_cast<long long>(pow(5, n - 1));
+    int r = (i - 1) / PowFive[n - 1];
     
-    long long result = 0;
-    long long Idx = (End - 1) / FivePow[n - 1];   
-    if (Idx <= 2)
+    long long res = 0;
+    if (r < 2)
     {
-        result += FourPow[n - 1] * Idx;
+        //res += static_cast<long long>(pow(4, n - 1)) * r;
+        res += PowFour[n - 1] * r;
+    }
+    else if (r == 2)
+    {
+        return PowFour[n - 1] * 2;
     }
     else
     {
-        result += FourPow[n - 1] * (Idx - 1);
+        //res += static_cast<long long>(pow(4, n - 1)) * (r - 1);
+        res += PowFour[n - 1] * (r - 1);
     }
     
-    if (Idx != 2)
-    {
-        result += CountFromStart(n - 1, (End - 1) % FivePow[n - 1] + 1);
-    }
-        
-    return result;
+    //i -= static_cast<long long>(pow(5, n - 1)) * r;
+    i -= PowFive[n - 1] * r;
+    return res + OneCount(n - 1, i);
 }
 
-int solution(int n, long long l, long long r) { 
-    for (int i = 1; i <= n; i++)
+int solution(int n, long long l, long long r) {
+    for (int i = 2; i < 21; i++)
     {
-        FivePow[i] = FivePow[i - 1] * 5;
-        FourPow[i] = FourPow[i - 1] * 4;
+        PowFive[i] = PowFive[i - 1] * 5;
+        PowFour[i] = PowFour[i - 1] * 4;
     }
-    
-    int answer = CountFromStart(n, r) - CountFromStart(n, l - 1);
-    return answer;
+    return OneCount(n, r) - OneCount(n, l - 1);
 }
-    
