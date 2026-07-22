@@ -6,20 +6,26 @@ using namespace std;
 int solution(vector<vector<int>> triangle) {
     for (int i = 1; i < triangle.size(); i++)
     {
-        int j = 0;
-        triangle[i][j] += triangle[i - 1][j];
-        for (j = 1; j < triangle[i].size() - 1; j++)
+        for (int j = 0; j < triangle[i].size(); j++)
         {
-            int FromLeft = triangle[i - 1][j - 1], FromRight = triangle[i - 1][j];
-            triangle[i][j] += max(FromLeft, FromRight);
+            if (j == 0)
+            {
+                triangle[i][j] += triangle[i - 1][j];
+            }
+            else if (j == triangle[i].size() - 1)
+            {
+                triangle[i][j] += triangle[i - 1][j - 1];
+            }
+            else
+            {
+                triangle[i][j] += max(triangle[i - 1][j - 1], triangle[i - 1][j]);
+            }
         }
-        triangle[i][j] += triangle[i - 1][j - 1];
     }
-    
     int answer = 0;
-    for (int i = 0; i < triangle.back().size(); i++)
+    for (int n : triangle.back())
     {
-        answer = max(triangle.back()[i], answer);
+        answer = max(answer, n);
     }
     return answer;
 }
