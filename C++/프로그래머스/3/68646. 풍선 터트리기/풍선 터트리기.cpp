@@ -1,30 +1,32 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <set>
 
 using namespace std;
 
 int solution(vector<int> a) {
-    set<int> table;
-    for (int i = 1; i < a.size(); i++)
+    if (a.size() < 3)
     {
-        table.insert(a[i]);
+        return a.size();        
     }
     
-    int answer = 2, MinLeft = a[0], MinRight;
+    set<int> Left = {a[0]}, Right;
+    for (int i = 2; i < a.size(); i++)
+    {
+        Right.insert(a[i]);
+    }
+    
+    int answer = 2;
     for (int i = 1; i < a.size() - 1; i++)
     {
-        table.erase(a[i]);
-        MinRight = *table.begin();
-        if (MinRight < a[i] && MinLeft < a[i])
+        int MinLeft = *Left.begin(), MinRight = *Right.begin();
+        if (!(a[i] > MinLeft && a[i] > MinRight))
         {
-            continue;
+            answer++;
         }
         
-        answer++;
-        MinLeft = min(MinLeft, a[i]);
+        Left.insert(a[i]);
+        Right.erase(a[i + 1]);
     }
-    
     return answer;
 }
