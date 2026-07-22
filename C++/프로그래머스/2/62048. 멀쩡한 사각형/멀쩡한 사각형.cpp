@@ -1,15 +1,16 @@
-#include <cmath>
-
 using namespace std;
 
-int GCD(int a, int b) {
-    if (b == 0)
-        return a;
-    return GCD(b, a % b);
+int GCD(int a, int b)
+{
+    while(b)
+    {
+        int c = a % b;
+        a = b;
+        b = c;
+    }
+    return a;
 }
 
 long long solution(int w,int h) {
-    long long answer = static_cast<long long>(w) * h;
-    long long cut = (long long)w + h - GCD(w, h);
-    return answer - cut;
+    return 1ll * w * h - (w + h - GCD(w, h));
 }
