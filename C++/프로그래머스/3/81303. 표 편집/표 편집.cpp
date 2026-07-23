@@ -1,71 +1,78 @@
 #include <string>
 #include <vector>
-#include <stack>
 
 using namespace std;
 
+struct Node
+{
+    int Prev, Next;    
+};
+
 string solution(int n, int k, vector<string> cmd) {
-    vector<int> prev_row(n);
-    vector<int> next_row(n);
-    
-    for (int i = 0; i < n; i++) {
-        prev_row[i] = i - 1;
-        next_row[i] = i + 1;
+    vector<Node> Table(n);
+    Table[0] = {-1, 1};
+    for (int i = 1; i < n - 1; i++)
+    {
+        Table[i].Prev = i - 1;
+        Table[i].Next = i + 1;
     }
-    prev_row[0] = -1;
-    next_row[n - 1] = -1;
-
-    stack<int> deleted;
-    vector<bool> is_deleted(n, false);
-
-    for (const string& s : cmd) {
-        if (s[0] == 'U') {
-            int x = stoi(s.substr(2));
-            while (x--) {
-                k = prev_row[k];
+    Table[n - 1] = {n - 2, -1};
+    
+    vector<int> Clear;
+    for (const string& s : cmd)
+    {
+        if (s[0] == 'U')
+        {
+            int X = stoi(s.substr(2));
+            while (X)
+            {
+                k = Table[k].Prev;
+                X--;
             }
-        } 
-        else if (s[0] == 'D') {
-            int x = stoi(s.substr(2));
-            while (x--) {
-                k = next_row[k];
+        }
+        else if (s[0] == 'D')
+        {
+            int X = stoi(s.substr(2));
+            while (X)
+            {
+                k = Table[k].Next;
+                X--;
             }
-        } 
-        else if (s[0] == 'C') {
-            deleted.push(k);
-            is_deleted[k] = true;
-
-            int prev = prev_row[k];
-            int next = next_row[k];
-
-            if (prev != -1) next_row[prev] = next;
-            if (next != -1) prev_row[next] = prev;
-
-            if (next != -1) {
-                k = next;
-            } else {
-                k = prev;
+        }
+        else if (s[0] == 'C')
+        {
+            if (Table[k].Prev != -1)
+            {
+                Table[Table[k].Prev].Next = Table[k].Next;                
             }
-        } 
-        else if (s[0] == 'Z') {
-            int restore = deleted.top();
-            deleted.pop();
-            is_deleted[restore] = false;
-
-            int prev = prev_row[restore];
-            int next = next_row[restore];
-
-            if (prev != -1) next_row[prev] = restore;
-            if (next != -1) prev_row[next] = restore;
+            if (Table[k].Next != -1)
+            {
+                Table[Table[k].Next].Prev = Table[k].Prev;    
+            }
+            Clear.push_back(k);
+            
+            k = (Table[k].Next == -1 ? Table[k].Prev : Table[k].Next);
+        }
+        else
+        {
+            int ClearK = Clear.back();
+            Clear.pop_back();
+            
+            if (Table[ClearK].Prev != -1)
+            {
+                Table[Table[ClearK].Prev].Next = ClearK;
+            }
+            if (Table[ClearK].Next != -1)
+            {
+                Table[Table[ClearK].Next].Prev = ClearK;
+            }
         }
     }
-
-    string answer = "";
-    answer.reserve(n);
-    for (int i = 0; i < n; i++) {
-        if (is_deleted[i]) answer += 'X';
-        else answer += 'O';
-    }
     
+    string answer(n, 'O');
+    for (int i : Clear)
+    {
+        answer[i] = 'X';
+    }
     return answer;
 }
