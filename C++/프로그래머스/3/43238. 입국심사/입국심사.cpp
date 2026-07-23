@@ -4,25 +4,24 @@
 using namespace std;
 
 long long solution(int n, vector<int> times) {
-    long long start = 0, end = 1000000000000000000, answer = 1000000000000000000;
-    while (start <= end)
+    long long answer = 1000000000000000000, Start = 1, End = 1000000000000000000;
+    while (Start <= End)
     {
-        long long mid = (start + end) / 2, total = 0;
+        long long Mid = (Start + End) / 2;
+        long long cnt = 0;
         for (int t : times)
         {
-            total += mid / t;
+            cnt += Mid / t;
         }
-        if (total < n)
+        if (cnt >= n)
         {
-            start = mid + 1;
+            answer = Mid;
+            End = Mid - 1;
         }
-        else if (total >= n)
+        else
         {
-            answer = min(answer, mid);
-            end = mid - 1;
+            Start = Mid + 1;
         }
     }
-
     return answer;
 }
-
