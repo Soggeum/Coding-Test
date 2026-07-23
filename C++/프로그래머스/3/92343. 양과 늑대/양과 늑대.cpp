@@ -1,43 +1,53 @@
 #include <string>
 #include <vector>
-#include <algorithm>
+#include <unordered_set>
 
 using namespace std;
 
-void DFS(int cur, int& MaxSheep, int& Sheep, int& Wolf, vector<int> NextNodes, const vector<int>& info, const vector<vector<int>>& Tree)
+void DFS(int Cur, int Sheep, int Wolf, unordered_set<int> Next, int& answer, const vector<int>& info, const vector<vector<bool>>& Graphs)
 {
-    info[cur] == 0 ? Sheep++ : Wolf++;
+    if (info[Cur])
+    {
+        Wolf++;
+    }
+    else
+    {
+        Sheep++;
+    }
+    
     if (Sheep <= Wolf)
-    { 
-        info[cur] == 0 ? Sheep-- : Wolf--;
+    {
         return;
     }
-    
-    MaxSheep = max(MaxSheep, Sheep);
-    NextNodes.erase(find(NextNodes.begin(), NextNodes.end(), cur));
-    for (int node : Tree[cur])
+    if (Sheep > answer)
     {
-        NextNodes.push_back(node);
+        answer = Sheep;
     }
     
-    for (int Node : NextNodes)
+    Next.erase(Cur);
+    for (int j = 0; j < Graphs[Cur].size(); j++)
     {
-        DFS(Node, MaxSheep, Sheep, Wolf, NextNodes, info, Tree);
+        if (Graphs[Cur][j])
+        {
+            Next.insert(j);
+        }
     }
     
-    info[cur] == 0 ? Sheep-- : Wolf--;
+    for (int n : Next)
+    {
+        DFS(n, Sheep, Wolf, Next, answer, info, Graphs);
+    }
 }
 
 int solution(vector<int> info, vector<vector<int>> edges) {
-    vector<vector<int>> Tree(info.size());
-    for (const vector<int> edge : edges)
+    vector<vector<bool>> Graphs(info.size(), vector<bool>(info.size()));
+    for (const vector<int>& edge : edges)
     {
-        Tree[edge[0]].push_back(edge[1]);
+        Graphs[edge[0]][edge[1]] = true;
     }
     
-    int MaxSheep = 0, Sheep = 0, Wolf = 0;
-    vector<int> NextNodes = {0};
-    DFS(0, MaxSheep, Sheep, Wolf, NextNodes, info, Tree);
+    int answer = 0;
+    DFS(0, 0, 0, {0}, answer, info, Graphs);    
     
-    return MaxSheep;
+    return answer;
 }
