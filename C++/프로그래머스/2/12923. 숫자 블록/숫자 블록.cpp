@@ -3,39 +3,33 @@
 
 using namespace std;
 
-int FindBlock(int num)
-{
-    if (num == 1)
-    {
-        return 0;
-    }
-    
-    int res = 1;
-    for (int i = 2; i * i <= num; i++)
-    {
-        if (num % i == 0)
-        {
-            int div = num / i;
-            if (div <= 10000000)
-            {
-                return div;
-            }
-            else
-            {
-                res = i;
-            }
-        }
-    }
-    return res;
-}
-
 vector<int> solution(long long begin, long long end) {
     vector<int> answer;
-    answer.reserve(end - begin + 1);
-    for (int num = begin; num <= end; num++)
+    for (int i = begin; i <= end; i++)
     {
-        answer.push_back(FindBlock(num));
+        int num = 1;
+        for (int j = 2; j * j <= i; j++)
+        {
+            if (i % j == 0)
+            {
+                if  (i / j > 10000000)
+                {
+                    num = j;
+                }
+                else
+                {
+                    num = i / j;
+                    break;
+                }
+                
+            }
+        }
+        answer.push_back(num);
     }
     
+    if (begin == 1)
+    {
+        answer[0] = 0;
+    }
     return answer;
 }
