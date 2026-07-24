@@ -3,61 +3,45 @@
 
 using namespace std;
 
-bool IsOneOneZero(const vector<char>& St)
-{
-    int N = St.size();
-    if (N >= 3)
-    {
-        char A = St[N - 3], B = St[N - 2], C = St[N - 1];
-        if (A == '1' && B == '1' && C == '0')
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 vector<string> solution(vector<string> s) {
     vector<string> answer;
-    for (const string S : s)
+    for (const string& x : s)
     {
-        string Result;
-        Result.reserve(S.size());
-        vector<char> St;
-        int Count = 0;
-        for (char C : S)
+        if (x.size() <= 3)
         {
-            St.push_back(C);
-            if (IsOneOneZero(St))
+            answer.push_back(x);
+            continue;
+        }
+        
+        string Temp = x.substr(0, 2);
+        int Count = 0;
+        for (int i = 2; i < x.size(); i++)
+        {
+            Temp.push_back(x[i]);
+            while (Temp.size() >= 3 && string(Temp.end() - 3, Temp.end()) == "110")
             {
-                St.pop_back(); St.pop_back(); St.pop_back();
                 Count++;
+                Temp.pop_back();Temp.pop_back();Temp.pop_back();
             }
         }
         
         int LastZero = -1;
-        for (int i = St.size() - 1; i >= 0; i--)
+        for (int i = 0; i < Temp.size(); i++)
         {
-            if (St[i] == '0')
+            if (Temp[i] == '0')
             {
                 LastZero = i;
-                break;
             }
         }
-        int idx = 0;
-        for (; idx <= LastZero; idx++)
-        {
-            Result.push_back(St[idx]);
-        }
+        
+        string res = string(Temp.begin(), Temp.begin() + LastZero + 1);
         for (int i = 0; i < Count; i++)
         {
-            Result.append("110");
+            res.append("110");
         }
-        for (; idx < St.size(); idx++)
-        {
-            Result.push_back(St[idx]);
-        }
-        answer.push_back(Result);        
+        res.append(string(Temp.begin() + LastZero + 1, Temp.end()));
+        answer.push_back(res);
     }
+    
     return answer;
 }
