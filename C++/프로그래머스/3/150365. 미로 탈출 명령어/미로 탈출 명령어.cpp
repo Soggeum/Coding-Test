@@ -3,51 +3,46 @@
 
 using namespace std;
 
-int CalculateDist(int x, int y, int r, int c)
+bool IsPossible(int n, int m, int x, int y, int r, int c, int k)
 {
-    return abs(x - r) + abs(y - c);    
-}
-
-bool IsIn(int NewX, int NewY, int N, int M)
-{
-    if (NewX < 1 || NewX > N)
+    if (x < 1 || x > n || y < 1 || y > m)
     {
         return false;
     }
-    if (NewY < 1 || NewY > M)
+    
+    int Move = abs(x - r) + abs(y - c);
+    if (Move > k)
     {
         return false;
     }
-    return true;
+    return !((Move - k) & 1);
 }
 
 string solution(int n, int m, int x, int y, int r, int c, int k) {
-    int Dist = CalculateDist(x, y, r, c);
-    if (Dist > k || (k - Dist) % 2)
+    string answer = "";
+    
+    int Move = abs(x - r) + abs(y - c);
+    if (Move > k || (Move - k) & 1)
     {
         return "impossible";
     }
-       
-    string answer;
-    answer.reserve(k);
-    vector<int> dx = {1, 0, 0, -1};     // d l r u
-    vector<int> dy = {0, -1, 1, 0};     // d l r u
+    
+    vector<int> dy = {0, -1, 1, 0};
+    vector<int> dx = {1, 0, 0, -1};
     vector<char> dir = {'d', 'l', 'r', 'u'};
-    for (int i = 0; i < k; i++)
+    
+    while (k)
     {
-        for (int j = 0; j < dx.size(); j++)
+        k--;
+        for (int i = 0; i < dx.size(); i++)
         {
-            int NewX = x + dx[j], NewY = y + dy[j];
-            if (IsIn(NewX, NewY, n, m))
+            int NewX = x + dx[i], NewY = y + dy[i];
+            if (IsPossible(n, m, NewX, NewY, r, c, k))
             {
-                int RemainingDist = CalculateDist(NewX, NewY, r, c);
-                if (RemainingDist <= k - (i + 1))
-                {
-                    answer.push_back(dir[j]);
-                    x = NewX;
-                    y = NewY;
-                    break;
-                }
+                x = NewX;
+                y = NewY;
+                answer.push_back(dir[i]);
+                break;
             }
         }
     }
