@@ -4,36 +4,55 @@
 
 using namespace std;
 
-int solution(int n, vector<int> weak, vector<int> dist) {
-    int answer = 9, WeakNum = weak.size();
-    for (int i = 0; i < WeakNum; i++)
+int _FindAnswer(const vector<int>& Weak, const vector<int>& dist, vector<bool>& Used, int PointIdx)
+{
+    if (PointIdx == Weak.size())
     {
-        weak.push_back(weak[i] + n);
+        int res = 0;
+        for (bool b : Used)
+        {
+            if (b)
+            {
+                res++;
+            }
+        }
+        return res;
     }
     
-    sort(dist.begin(), dist.end());
-    do 
+    int Res = 999;
+    for (int i = 0; i < dist.size(); i++)
     {
-        for (int Start = 0; Start < WeakNum; Start++)
+        if (!Used[i])
         {
-            int Count = 0;
-            int CurWeak = Start, LastWeak = Start + WeakNum - 1;
-            for (int d : dist)
-            {
-                Count++;
-                int Dest = weak[CurWeak] + d;
-                while (CurWeak <= LastWeak && Dest >= weak[CurWeak])
-                {
-                    CurWeak++;
-                }
-                if (CurWeak > LastWeak)
-                {
-                    answer = min(answer, Count);
-                    break;
-                }
-            }
-        }        
-    } while (next_permutation(dist.begin(), dist.end()));
+            Used[i] = true;
+            int StartPoint = Weak[PointIdx];
+            int EndPoint = StartPoint + dist[i];
+            int NewPointIdx = upper_bound(Weak.begin(), Weak.end(), EndPoint) - Weak.begin();
+            Res = min(Res, _FindAnswer(Weak, dist, Used, NewPointIdx));
+            Used[i] = false;
+        }
+    }
+    return Res;
+}
+
+int FindAnswer(const vector<int>& Weak, const vector<int>& dist)
+{
+    vector<bool> Used(dist.size());
+    int PointIdx = 0;
+    return _FindAnswer(Weak, dist, Used, PointIdx);
+}
+
+int solution(int n, vector<int> weak, vector<int> dist) {
+    int answer = 999;
+    for (int i = 0; i < weak.size(); i++)
+    {
+        vector<int> NewWeak(weak.begin() + i, weak.end());
+        for (int j = 0; j < i; j++)
+        {
+            NewWeak.push_back(n + weak[j]);
+        }
+        answer = min(answer, FindAnswer(NewWeak, dist));
+    }
     
-    return answer == 9 ? -1 : answer;
+    return answer == 999 ? -1 : answer;
 }
