@@ -1,109 +1,94 @@
 #include <string>
 #include <vector>
+#include <map>
 #include <sstream>
-#include <unordered_map>
 #include <algorithm>
 
 using namespace std;
 
-void DFS(const string& Lan, const string& Job, const string& Exp, const string& Food, string& Key, int idx, vector<string>& result)
+void DFS(const vector<vector<string>>& Comb, vector<string>& Cur, int i, map<vector<string>, vector<int>>& m)
 {
-    if (idx == 4)
+    if (i == 4)
     {
-        result.push_back(Key);
+        m[Cur] = {};
         return;
     }
     
-    string Temp = Key;
-    switch(idx) 
+    for (int j = 0; j < Comb[i].size(); j++)
     {
-        case 0 :
-            Temp.append(Lan);
-            Temp.append(" and ");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            
-            Temp = Key;
-            Temp.append("- and ");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            break;
-            
-        case 1:
-            Temp.append(Job);
-            Temp.append(" and ");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            
-            Temp = Key;
-            Temp.append("- and ");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            break;
-            
-        case 2:
-            Temp.append(Exp);
-            Temp.append(" and ");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            
-            Temp = Key;
-            Temp.append("- and ");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            break;
-            
-        default :
-            Temp.append(Food);
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
-            
-            Temp = Key;
-            Temp.append("-");
-            DFS(Lan, Job, Exp, Food, Temp, idx + 1, result);
+        Cur.push_back(Comb[i][j]);
+        DFS(Comb, Cur, i + 1, m);
+        Cur.pop_back();
     }
 }
 
-vector<string> MakeComb(const string& Lan, const string& Job, const string& Exp, const string& Food)
-{    
-    vector<string> result;
-    result.reserve(16);
+void Push(const vector<vector<string>>& Comb, vector<string>& Cur, int i, map<vector<string>, vector<int>>& m, int X)
+{
+    if (i == 4)
+    {
+        m[Cur].push_back(X);
+        return;
+    }
     
-    string Key;
-    DFS(Lan, Job, Exp, Food, Key, 0, result);    
-    return result;
+    for (int j = 0; j < Comb[i].size(); j++)
+    {
+        Cur.push_back(Comb[i][j]);
+        Push(Comb, Cur, i + 1, m, X);
+        Cur.pop_back();
+    }
 }
 
 vector<int> solution(vector<string> info, vector<string> query) {
-    unordered_map<string, vector<int>> um;
-    for (const string& Elem : info)
+    vector<vector<string>> Comb = 
     {
-        stringstream ss(Elem);
-        string Lan, Job, Exp, Food;
-        int Score;
-        ss >> Lan >> Job >> Exp >> Food >> Score;
-        
-        vector<string> Keys = MakeComb(Lan, Job , Exp, Food);
-        for (const string& Key : Keys)
+        {"cpp", "java", "python", "-"},
+        {"backend", "frontend", "-"},
+        {"junior", "senior", "-"},
+        {"chicken", "pizza", "-"}
+    };
+    map<vector<string>, vector<int>> m;
+    vector<string> Cur;
+    DFS(Comb, Cur, 0, m);
+    
+    vector<vector<string>> Base = 
         {
-            um[Key].push_back(Score);
+        {"-"},
+        {"-"},
+        {"-"},
+        {"-"}
+    };
+    for (const string& i : info)
+    {
+        vector<string> is(4);
+        int X;
+        stringstream ss(i);
+        ss >> is[0] >> is[1] >> is[2] >> is[3] >> X;
+        for (int i = 0; i < 4; i++)
+        {
+            Base[i].push_back(is[i]);
+        }
+        Push(Base, Cur, 0, m, X);
+        for (int i = 0; i < 4; i++)
+        {
+            Base[i].pop_back();
         }
     }
     
-    for (auto& it : um)
+    for (auto& it : m)
     {
         sort(it.second.begin(), it.second.end());
     }
-    
+
     vector<int> answer;
-    for (string q : query)
+    for (const string& q : query)
     {
-        int idx = q.size() - 1;
-        while (isdigit(q[idx]))
-        {
-            idx--;
-        }
-        int Score = stoi(q.substr(idx + 1));
-        for (int i = q.size() - 1; i >= idx; i--)
-        {
-            q.pop_back();
-        }
-        
-        auto it = lower_bound(um[q].begin(), um[q].end(), Score);
-        answer.push_back(um[q].end() - it);
+        stringstream ss(q);
+        vector<string> vs(4);
+        string a1, a2, a3;
+        int X;
+        ss >> vs[0] >> a1 >> vs[1] >> a2 >> vs[2] >> a3 >> vs[3] >> X;
+        answer.push_back(m[vs].end() - lower_bound(m[vs].begin(), m[vs].end(), X));
     }
+    
     return answer;
 }
