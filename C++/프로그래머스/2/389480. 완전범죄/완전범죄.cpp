@@ -4,7 +4,7 @@
 using namespace std;
 
 int solution(vector<vector<int>> info, int n, int m) {
-    vector<vector<int>> DP(info.size(), vector<int>(m, -1));
+    vector<vector<int>> DP(info.size(), vector<int>(m, n));
     if (info[0][0] < n)
     {
         DP[0][0] = info[0][0];
@@ -14,36 +14,29 @@ int solution(vector<vector<int>> info, int n, int m) {
         DP[0][info[0][1]] = 0;
     }
     
-    for (int i = 1; i < info.size(); i++)
+    for (int i = 0; i < info.size() - 1; i++)
     {
-        int EvidA = info[i][0], EvidB = info[i][1];
-        for (int j = 0; j < m; j++)   
+        int NextA = info[i + 1][0], NextB = info[i + 1][1];
+        for (int j = 0; j < m; j++)
         {
-            if (DP[i - 1][j] != -1 && DP[i - 1][j] + EvidA < n)
+            if (DP[i][j] < n)
             {
-                DP[i][j] = DP[i - 1][j] + EvidA;
-            }
-            if (j - EvidB >= 0 && DP[i - 1][j - EvidB] != -1)
-            {
-                if (DP[i][j] == -1)
+                if (DP[i][j] + NextA < n)
                 {
-                    DP[i][j] = DP[i - 1][j - EvidB];
+                    DP[i + 1][j] = min(DP[i + 1][j], DP[i][j] + NextA);
                 }
-                else
+                if (j + NextB < m)
                 {
-                    DP[i][j] = min(DP[i][j], DP[i - 1][j - EvidB]);
-                }                
+                    DP[i + 1][j + NextB] = min(DP[i + 1][j + NextB], DP[i][j]);
+                }
             }
         }
     }
-    
-    int answer = 150;
-    for (int i = 0; i < m; i++)
+        
+    int answer = n;
+    for (int n : DP.back())
     {
-        if (DP[info.size() - 1][i] != -1)
-        {
-            answer = min(answer, DP[info.size() - 1][i]);
-        }
+        answer = min(answer, n);
     }
-    return answer == 150 ? -1 : answer;
+    return answer == n ? -1 : answer;
 }
