@@ -4,29 +4,26 @@
 
 using namespace std;
 
-struct Node 
+struct Node
 {
-    int CrossNum, Count;
-    bool operator<(const Node& a) const
+    int CrossNum, Count;    
+    bool operator<(const Node& Other) const
     {
-        return Count < a.Count;
+        return Count < Other.Count;
     }
 };
 
-int solution(vector<int> a) {
-    vector<int> Table(500001);
-    for(int Num : a)
+int solution(std::vector<int> a) {
+    vector<int> Table(a.size());
+    for (int n : a)
     {
-        Table[Num]++;
+        Table[n]++;
     }
-
+    
     priority_queue<Node> pq;
     for (int i = 0; i < Table.size(); i++)
     {
-        if (Table[i])
-        {
-            pq.push({i, Table[i]});
-        }
+        pq.push({i, Table[i]});
     }
     
     int answer = 0;
@@ -35,28 +32,29 @@ int solution(vector<int> a) {
         int CrossNum = pq.top().CrossNum, Count = pq.top().Count;
         pq.pop();
         
-        if (Count < answer)
+        if (Count * 2 <= answer)
         {
-            return answer;
+            continue;
         }
         
-        int len = 0, LastIdx = -1;
+        int LastIdx = -1, Len = 0;
         for (int i = 0; i < a.size(); i++)
         {
             if (a[i] == CrossNum)
             {
                 Count--;
-                if (i - 1 != LastIdx && i != 0 && a[i - 1] != CrossNum)
+                if (i - 1 >= 0 && a[i - 1] != CrossNum && i - 1 > LastIdx)
                 {
-                    len += 2;
+                    Len += 2;
                     LastIdx = i;
                 }
-                else if (i + 1 < a.size() && a[i + 1] != a[i])
+                else if (i + 1 < a.size() && a[i + 1] != CrossNum)
                 {
-                    len += 2;
+                    Len += 2;
                     LastIdx = i + 1;
                     i++;
                 }
+                
                 if (Count == 0)
                 {
                     break;
@@ -64,7 +62,7 @@ int solution(vector<int> a) {
             }
         }
         
-        answer = max(answer, len);
+        answer = max(answer, Len);
     }
     
     return answer;
