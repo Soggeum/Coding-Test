@@ -1,16 +1,15 @@
 using namespace std;
 
-int GCD(int a, int b)
+int GCD(int w, int h)
 {
-    while(b)
+    if (h == 0)
     {
-        int c = a % b;
-        a = b;
-        b = c;
+        return w;
     }
-    return a;
+    return GCD(h, w % h);
 }
 
 long long solution(int w,int h) {
-    return 1ll * w * h - (w + h - GCD(w, h));
+    long long answer = 1ll * w * h - (w + h - GCD(w, h));
+    return answer;
 }
