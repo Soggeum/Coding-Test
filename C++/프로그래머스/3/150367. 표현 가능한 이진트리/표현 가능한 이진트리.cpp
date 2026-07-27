@@ -1,81 +1,63 @@
 #include <string>
 #include <vector>
-#include <unordered_set>
+#include <algorithm>
 
 using namespace std;
 
-string MakeBinary(long long number)
+string GetBin(long long n)
 {
-    string Result;
-    int R;
-    while (number)
+    string res;
+    while (n)
     {
-        R = number % 2;
-        Result.push_back('0' + R);
-        number /= 2;
+        res.push_back('0' + n % 2);
+        n /= 2;
     }
-    return string(Result.rbegin(), Result.rend());
+    return string(res.rbegin(), res.rend());
 }
 
-bool IsRoot(string Binary, int root, bool OneFlag, const unordered_set<long long>& TwoPowers)
+bool IsCBT(const string& CBT, int Left, int Root, int Right)
 {
-    if (!OneFlag && Binary[root] == '1')
-    {
-        return false;
-    }
-    OneFlag = Binary[root] == '1' ? true : false;
-    
-    if (Binary.size() == 1)
+    if (Left == Root && Root == Right)
     {
         return true;
     }
     
-        
-    int RightChildNum = Binary.size() - 1 - root;
-    if (TwoPowers.find(RightChildNum + 1) == TwoPowers.end())
+    if (CBT[Root] == '1')
     {
-        return false;
+        return IsCBT(CBT, Left, (Left + Root - 1) / 2, Root - 1) && 
+            IsCBT(CBT, Root + 1, (Root + 1 + Right) / 2, Right);
     }
-    
-    string Left, Right = Binary.substr(root + 1);    
-    if (root < Right.size())
+    else
     {
-        Left.append(string(Right.size() - root, '0'));
-    }
-    Left.append(Binary.substr(0, root));
-    
-    int LeftRoot = Left.size() / 2, RightRoot = Right.size() / 2;
-    
-    bool bLeftCBT = IsRoot(Left, LeftRoot, OneFlag, TwoPowers);
-    bool bRightCBT = IsRoot(Right, RightRoot, OneFlag, TwoPowers);
-    return bLeftCBT && bRightCBT;
-}
-
-bool IsCBT(string Binary, const unordered_set<long long>& TwoPowers)
-{
-    for (int i = 0; i < (Binary.size() + 1) / 2; i++)
-    {
-        if (Binary[i] && IsRoot(Binary, i, true, TwoPowers))
+        for (int i = Left; i <= Right; i++)
         {
-            return true;
+            if (CBT[i] == '1')
+            {
+                return false;
+            }
         }
+        return true;
     }
-    return false;
 }
 
 vector<int> solution(vector<long long> numbers) {
-    unordered_set<long long> TwoPowers;
-    for (long long Temp = 1, Power = 0; Power < 60; Power++)
+    vector<int> CBT;
+    int Num = 1;
+    while (Num <= 64)
     {
-        Temp *= 2;
-        TwoPowers.insert(Temp);
-    }    
+        CBT.push_back(Num);
+        Num = Num * 2 + 1;
+    }
     
     vector<int> answer;
     for (long long number : numbers)
     {
-        string Binary = MakeBinary(number);
-        if (IsCBT(Binary, TwoPowers))
+        string Bin = GetBin(number);
+        int CBTNum = *lower_bound(CBT.begin(), CBT.end(), Bin.size());
+        string CBTBin(CBTNum - Bin.size(), '0');
+        CBTBin.append(Bin);
+        
+        if (IsCBT(CBTBin, 0, (CBTBin.size() - 1) / 2, CBTBin.size() - 1))
         {
             answer.push_back(1);
         }
