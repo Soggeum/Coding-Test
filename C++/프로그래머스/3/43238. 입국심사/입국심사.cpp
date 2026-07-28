@@ -4,18 +4,19 @@
 using namespace std;
 
 long long solution(int n, vector<int> times) {
-    long long answer = 1000000000000000000, Start = 1, End = 1000000000000000000;
+    long long answer = 1ll * n * 1000000000, Start = 0, End = 1ll * n * 1000000000;
     while (Start <= End)
     {
         long long Mid = (Start + End) / 2;
-        long long cnt = 0;
+        long long Count = 0;
         for (int t : times)
         {
-            cnt += Mid / t;
+            Count += Mid / t;
         }
-        if (cnt >= n)
+        
+        if (Count >= n)
         {
-            answer = Mid;
+            answer = min(answer, Mid);
             End = Mid - 1;
         }
         else
