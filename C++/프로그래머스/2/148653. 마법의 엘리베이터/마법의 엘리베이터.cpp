@@ -7,35 +7,34 @@ int solution(int storey) {
     int answer = 0;
     while (storey)
     {
-        int Curr = storey % 10;
-        if (Curr < 5)
+        int r = storey % 10;
+        if (r > 5)
         {
-            answer += Curr;
-            storey /= 10;
-        }
-        else if (Curr > 5)
-        {
-            answer += 10 - Curr;
+            answer += 10 - r;
             storey /= 10;
             storey++;
         }
+        else if (r < 5)
+        {
+            answer += r;
+            storey /= 10;
+        }
         else
         {
-            int Front = storey % 100 / 10;
-            if (Front < 5)
+            int forward = storey % 100 / 10;
+            if (forward >= 5)
             {
-                answer += Curr;
+                answer += 10 - r;
                 storey /= 10;
+                storey ++;
             }
             else
             {
-                answer += 10 - Curr;
+                answer += r;
                 storey /= 10;
-                storey++;
             }
         }
     }
+    
     return answer;
 }
-
-    
