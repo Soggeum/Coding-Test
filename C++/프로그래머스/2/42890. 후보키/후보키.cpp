@@ -1,115 +1,52 @@
 #include <string>
 #include <vector>
-#include <queue>
-#include <algorithm>
-#include <set>
+#include <unordered_set>
 
 using namespace std;
 
-void DFS(int N, int C, string& Res, int Idx, vector<string>& Result)
-{
-    if (Res.length() == C)
-    {
-        Result.push_back(Res);
-        return;
-    }
-    if (Idx > N)
-    {
-        return;
-    }
-    
-    DFS(N, C, Res, Idx + 1, Result);
-    Res.push_back('0' + Idx);
-    DFS(N, C, Res, Idx + 1, Result);
-    Res.pop_back();
-}
-
-vector<string> MakeCombinations(int N, int C)
-{
-    vector<string> Result;
-    string Res;
-    DFS(N, C, Res, 1, Result);
-    return Result;
-}
-
-bool _IsMinimal(const string& Key, const string& CandidateKey)
-{
-    for (char c : CandidateKey)
-    {
-        if (!binary_search(Key.begin(), Key.end(), c))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool IsMinimal(const string& Key, const vector<string>& Keys)
-{
-    for (const string& CandidateKey : Keys)
-    {
-        if (!_IsMinimal(Key, CandidateKey))
-        {
-           return false; 
-        }
-    }
-    return true;
-}
-
-void MakeUnknownCandidateKeys(int N, queue<string>& UnknownCandidateKeys)
-{
-    for (int i = 1; i <= N; i++)
-    {
-        vector<string> Res = MakeCombinations(N, i);
-        for (const string& R : Res)
-        {
-            UnknownCandidateKeys.push(R);
-        }
-    }
-}
-
-bool IsUnique(const string& UnknownCandidateKey, const vector<vector<string>>& relation)
-{
-    set<string> Tuples;
-    for (int i = 0; i < relation.size(); i++)
-    {
-        string Tuple;
-        for (char c : UnknownCandidateKey)
-        {
-            Tuple.append(relation[i][c - '0' - 1]);
-        }
-        if (Tuples.find(Tuple) != Tuples.end())
-        {
-            return false;
-        }
-        else
-        {
-            Tuples.insert(Tuple);
-        }
-    }
-    return true;
-}
-
 int solution(vector<vector<string>> relation) {
-    queue<string> UnknownCandidateKeys;
-    vector<string> CandidateKeys;
-    MakeUnknownCandidateKeys(relation[0].size(), UnknownCandidateKeys);
+    vector<int> answer;
     
-    while (!UnknownCandidateKeys.empty())
+    for (int i = 1; i < (1 << relation[0].size()); i++)
     {
-        string UnknownCandidateKey = UnknownCandidateKeys.front();
-        UnknownCandidateKeys.pop();
-        
-        if (!IsMinimal(UnknownCandidateKey, CandidateKeys))
+        unordered_set<string> us;
+        for (int r = 0; r < relation.size(); r++)
         {
-            continue;
+            string t;
+            for (int c = 0; c < relation[r].size(); c++)
+            {
+                if (i & (1 << c))
+                {
+                    t.append(relation[r][c]);
+                    t.push_back(' ');
+                }
+            }
+            if (us.find(t) == us.end())
+            {
+                us.insert(t);
+            }
+            else
+            {
+                break;
+            }
         }
         
-        if (IsUnique(UnknownCandidateKey, relation))
+        if (us.size() == relation.size())
         {
-            CandidateKeys.push_back(UnknownCandidateKey);
+            int idx = 0;
+            for (; idx < answer.size(); idx++)
+            {
+                if ((answer[idx] & i) == answer[idx])
+                {
+                    break;
+                }
+            }
+            if (idx == answer.size())
+            {
+                answer.push_back(i);
+            }
         }
     }
     
-    return CandidateKeys.size();
+    return answer.size();
 }
