@@ -5,7 +5,7 @@ using namespace std;
 
 string solution(int n) {
     string answer = "";
-    while(n)
+    while (n)
     {
         int r = n % 3;
         n /= 3;
