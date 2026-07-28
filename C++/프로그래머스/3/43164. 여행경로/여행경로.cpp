@@ -1,64 +1,62 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
 struct Node
 {
     string Dest;
-    bool Visited;  
+    bool bUsed;    
+    bool operator<(const Node& Other)
+    {
+        return Dest < Other.Dest;
+    }
 };
 
-bool comp(const Node& a, const Node& b)
+void DFS(unordered_map<string, vector<Node>>& um, vector<string>& answer, int UseCount, int TotalTickets, bool& bReturnFlag)
 {
-    return a.Dest < b.Dest;
-}
-
-void DFS(vector<string>& answer, unordered_map<string, vector<Node>>& Table, const int& TicketNum, bool& flag)
-{
-    if (flag)
+    if (bReturnFlag)
     {
         return;
     }
-    if (answer.size() == TicketNum + 1)
+    if (UseCount == TotalTickets)
     {
-        flag = true;
+        bReturnFlag = true;
         return;
     }
     
-    string Curr = answer.back();
-    for (Node& node : Table[Curr])
+    for (Node& Next : um[answer.back()])
     {
-        if (!(node.Visited))
+        if (!Next.bUsed)
         {
-            node.Visited = true;
-            answer.push_back(node.Dest);
-            DFS(answer, Table, TicketNum, flag);
-            if (flag)
+            Next.bUsed = true;
+            answer.push_back(Next.Dest);
+            DFS(um, answer, UseCount + 1, TotalTickets, bReturnFlag);
+            if (bReturnFlag)
             {
                 return;
             }
-            node.Visited = false;
             answer.pop_back();
+            Next.bUsed = false;
         }
     }
 }
 
 vector<string> solution(vector<vector<string>> tickets) {
-    unordered_map<string, vector<Node>> Table;
-    for (const vector<string>& t : tickets)
+    unordered_map<string, vector<Node>> um;
+    for (const vector<string>& ticket : tickets)
     {
-        Table[t[0]].push_back({t[1], false});
+        um[ticket[0]].push_back({ticket[1], false});
     }
-    for (auto& it : Table)
+    for (auto& it : um)
     {
-        sort(it.second.begin(), it.second.end(), comp);
+        sort(it.second.begin(), it.second.end());
     }
-    
+        
     vector<string> answer = {"ICN"};
-    bool flag = false;
-    DFS(answer, Table, tickets.size(), flag);
+    bool bReturnFlag = false;
+    DFS(um, answer, 0, tickets.size(), bReturnFlag);
     return answer;
 }
