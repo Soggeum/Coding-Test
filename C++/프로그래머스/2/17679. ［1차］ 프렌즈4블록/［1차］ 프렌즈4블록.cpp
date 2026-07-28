@@ -3,62 +3,57 @@
 
 using namespace std;
 
-bool ShouldDelete(const vector<string>& board, vector<vector<bool>>& Same)
-{
-    bool bFlag = false;
-    for (int i = 0; i < board.size() - 1; i++)
+int solution(int m, int n, vector<string> board) {
+    bool bFlag = true;
+    while (bFlag)
     {
-        for (int j = 0; j < board[0].size() - 1; j++)
+        bFlag = false;
+        vector<vector<bool>> Delete(m, vector<bool>(n));
+        for (int i = 0; i < m - 1; i++)
         {
-            char c = board[i][j];
-            if (isalpha(c))
+            for (int j = 0; j < n - 1; j++)
             {
-                if (c == board[i][j + 1] && c == board[i + 1][j] && c == board[i + 1][j + 1])
+                char c = board[i][j];
+                if (c == '0')
+                {
+                    continue;
+                }
+                if (board[i][j + 1] == c && board[i + 1][j] == c && board[i + 1][j + 1] == c)
                 {
                     bFlag = true;
-                    Same[i][j] = true;
-                    Same[i][j + 1] = true;
-                    Same[i + 1][j] = true;
-                    Same[i + 1][j + 1] = true;
-                }                
-            }
-        }
-    }
-    
-    return bFlag;
-}
-
-int solution(int m, int n, vector<string> board) {
-    vector<vector<bool>> Same(m, vector<bool>(n));
-    while (ShouldDelete(board, Same))
-    {      
-        for (int j = 0; j < n; j++)
-        {
-            for (int i = m - 1; i >= 0; i--)
-            {
-                if (Same[i][j])
-                {
-                    for (int k = i; k > 0; k--)
-                    {
-                        board[k][j] = board[k - 1][j];
-                        Same[k][j] = Same[k - 1][j];                        
-                    }
-                    board[0][j] = '0';
-                    Same[0][j] = false;
-                    i++;
+                    Delete[i][j] = true;
+                    Delete[i][j + 1] = true;
+                    Delete[i + 1][j] = true;
+                    Delete[i + 1][j + 1] = true;
                 }
             }
         }
         
-        Same = vector<vector<bool>>(m, vector<bool>(n));
+        for (int j = 0; j < n; j++)
+        {
+            for (int i = m - 1; i >= 0; i--)
+            {
+                if (Delete[i][j])
+                {
+                    for (int k = i; k > 0; k--)
+                    {
+                        board[k][j] = board[k - 1][j];
+                        Delete[k][j] = Delete[k - 1][j];
+                    }
+                    board[0][j] = '0';
+                    Delete[0][j] = false;
+                    i++;
+                }
+            }
+        }
     }
     
     int answer = 0;
-    for (int i = 0; i < m; i++)
+    for (const string& s : board)
     {
-        for (int j = 0; j < n; j++)
+        for (char c : s)
         {
-            if (isdigit(board[i][j]))
+            if (c == '0')
             {
                 answer++;
             }
