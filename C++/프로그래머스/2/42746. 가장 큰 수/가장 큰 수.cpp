@@ -4,7 +4,7 @@
 
 using namespace std;
 
-bool comp (const int& a, const int& b)
+bool comp(const int& a, const int& b)
 {
     return to_string(a) + to_string(b) > to_string(b) + to_string(a);
 }
@@ -16,6 +16,7 @@ string solution(vector<int> numbers) {
     {
         answer.append(to_string(n));
     }
+    
     if (answer[0] == '0')
     {
         return "0";
