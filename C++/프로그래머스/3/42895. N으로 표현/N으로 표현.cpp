@@ -5,62 +5,45 @@
 using namespace std;
 
 int solution(int N, int number) {
-    if (N == number)
-    {
-        return 1;
-    }
-    
-    vector<unordered_set<int>> DP(9);
+    int answer = 0;
+    vector<unordered_set<int>> Table(8 + 1);
     for (int i = 1; i < 9; i++)
     {
-        int Num = stoi(string(i, '0' + N));
-        if (Num == number)
+        Table[i].insert(stoi(string(i, '0' + N)));
+        if (Table[i].find(number) != Table[i].end())
         {
             return i;
         }
-        DP[i].insert(Num);
     }
     
     for (int i = 2; i < 9; i++)
     {
         for (int j = 1; j < i; j++)
         {
-            for (int op1 : DP[j])
+            for (int op1 : Table[j])
             {
-                for (int op2 : DP[i - j])
+                for (int op2 : Table[i - j])
                 {
-                    int Num = op1 + op2;
-                    if (Num == number)
-                    {
-                        return i;
-                    }
-                    DP[i].insert(Num);
+                    int Value = op1 + op2;
+                    Table[i].insert(Value);
                     
-                    Num = op1 - op2;
-                    if (Num == number)
-                    {
-                        return i;
-                    }
-                    DP[i].insert(Num);
+                    Value = op1 - op2;
+                    Table[i].insert(Value);
                     
-                    Num = op1 * op2;
-                    if (Num == number)
-                    {
-                        return i;
-                    }
-                    DP[i].insert(Num);
+                    Value = op1 * op2;
+                    Table[i].insert(Value);
                     
-                    if (op2)
+                    if (op2 != 0)
                     {
-                        Num = op1 / op2;
-                        if (Num == number)
-                        {
-                            return i;
-                        }
-                        DP[i].insert(Num);
+                        Value = op1 / op2;
+                        Table[i].insert(Value);
                     }
                 }
             }
+        }
+        if (Table[i].find(number) != Table[i].end())
+        {
+            return i;
         }
     }
     
