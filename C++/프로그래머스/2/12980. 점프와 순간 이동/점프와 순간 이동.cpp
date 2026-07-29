@@ -7,13 +7,14 @@ int solution(int n)
     {
         if (n & 1)
         {
-            answer++;
             n--;
+            answer++;
         }
         else
         {
             n = n >> 1;
         }
     }
+
     return answer;
 }
