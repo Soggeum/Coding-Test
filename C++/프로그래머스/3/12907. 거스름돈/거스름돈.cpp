@@ -10,8 +10,9 @@ int solution(int n, vector<int> money) {
     {
         for (int i = m; i <= n; i++)
         {
-            DP[i] += DP[i - m] % 1000000007;
+            DP[i] = (DP[i] + DP[i - m]) % 1000000007;
         }
     }
-    return DP[n] % 1000000007;
+    
+    return DP[n];
 }
