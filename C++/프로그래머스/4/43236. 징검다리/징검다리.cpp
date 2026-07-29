@@ -6,36 +6,37 @@ using namespace std;
 
 int solution(int distance, vector<int> rocks, int n) {
     sort(rocks.begin(), rocks.end());
-    int answer = 0, Start = 1, End = distance;
+    int Start = 1, End = distance, answer = 0;
     while (Start <= End)
     {
-        int MinDist = (Start + End) / 2;
-        int LastPoint = 0, Delete = 0;
-        for (int r : rocks)
+        int Count = 0, Mid = (Start + End) / 2;
+        int Last = 0;
+        for (int rock : rocks)
         {
-            if (r - LastPoint >= MinDist)
+            if (rock - Last >= Mid)
             {
-                LastPoint = r;
+                Last = rock;
             }
             else
             {
-                Delete++;                
+                Count++;
             }
         }
-        if (distance - LastPoint < MinDist)
+        if (distance - Last < Mid)
         {
-            Delete++;
+            Count++;
         }
         
-        if (Delete <= n)
+        if (Count <= n)
         {
-            answer = MinDist;
-            Start = MinDist + 1;
+            answer = max(answer, Mid);
+            Start = Mid + 1;
         }
         else
         {
-            End = MinDist - 1;
+            End = Mid - 1;
         }
     }
+    
     return answer;
 }
