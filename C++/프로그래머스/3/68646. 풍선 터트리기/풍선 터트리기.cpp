@@ -7,26 +7,25 @@ using namespace std;
 int solution(vector<int> a) {
     if (a.size() < 3)
     {
-        return a.size();        
+        return a.size();
     }
-    
-    set<int> Left = {a[0]}, Right;
+    int answer = 2, FrontSmall = a[0];
+    set<int> Back;
     for (int i = 2; i < a.size(); i++)
     {
-        Right.insert(a[i]);
+        Back.insert(a[i]);
     }
     
-    int answer = 2;
     for (int i = 1; i < a.size() - 1; i++)
     {
-        int MinLeft = *Left.begin(), MinRight = *Right.begin();
-        if (!(a[i] > MinLeft && a[i] > MinRight))
+        if (!(a[i] > FrontSmall && a[i] > *Back.begin()))
         {
             answer++;
         }
-        
-        Left.insert(a[i]);
-        Right.erase(a[i + 1]);
+        FrontSmall = min(FrontSmall, a[i]);
+        Back.erase(a[i + 1]);
     }
+    
+    
     return answer;
 }
