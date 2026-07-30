@@ -10,13 +10,14 @@ long long solution(int r1, int r2) {
     {
         if (x <= -r1 || x >= r1)
         {
-            answer += floor(sqrt(1ll * r2 * r2 - 1ll * x * x)) * 2 + 1;
+            int y = sqrt(1ll *r2 * r2 - 1ll * x * x);
+            answer += 2 * y + 1;
         }
         else
         {
-            int y2 = floor(sqrt(1ll * r2 * r2 - 1ll * x * x));
-            int y1 = ceil(sqrt(1ll * r1 * r1 - 1ll * x * x));
-            answer += (y2 - y1 + 1) * 2;
+            int y2 = sqrt(1ll *r2 * r2 - 1ll * x * x);            
+            int y1 = ceil(sqrt(1ll *r1 * r1 - 1ll * x * x));            
+            answer += 2 * (y2 - y1 + 1);
         }
     }
     return answer;
