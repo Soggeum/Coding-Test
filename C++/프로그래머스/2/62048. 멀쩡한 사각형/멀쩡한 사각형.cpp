@@ -10,6 +10,5 @@ int GCD(int w, int h)
 }
 
 long long solution(int w,int h) {
-    long long answer = 1ll * w * h - (w + h - GCD(w, h));
-    return answer;
+    return 1ll * w * h - (1ll * w + h - GCD(w, h));
 }
