@@ -9,23 +9,23 @@ int solution(vector<int> a) {
     {
         return a.size();
     }
-    int answer = 2, FrontSmall = a[0];
-    set<int> Back;
-    for (int i = 2; i < a.size(); i++)
-    {
-        Back.insert(a[i]);
-    }
     
+    int answer = 2;
+    set<int> Right;
+    for (int i = 1; i < a.size(); i++)
+    {
+        Right.insert(a[i]);
+    }
+    int MinLeft = a[0];
     for (int i = 1; i < a.size() - 1; i++)
     {
-        if (!(a[i] > FrontSmall && a[i] > *Back.begin()))
+        if (!(MinLeft < a[i] && *Right.begin() < a[i]))
         {
             answer++;
         }
-        FrontSmall = min(FrontSmall, a[i]);
-        Back.erase(a[i + 1]);
+        MinLeft = min(MinLeft, a[i]);
+        Right.erase(a[i]);
     }
-    
     
     return answer;
 }
