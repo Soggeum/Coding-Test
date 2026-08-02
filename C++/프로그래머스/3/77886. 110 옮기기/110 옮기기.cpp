@@ -5,43 +5,38 @@ using namespace std;
 
 vector<string> solution(vector<string> s) {
     vector<string> answer;
-    for (const string& x : s)
+    for (const string& cs : s)
     {
-        if (x.size() <= 3)
+        string x;
+        int count = 0;
+        for (char c : cs)
         {
-            answer.push_back(x);
-            continue;
-        }
-        
-        string Temp = x.substr(0, 2);
-        int Count = 0;
-        for (int i = 2; i < x.size(); i++)
-        {
-            Temp.push_back(x[i]);
-            while (Temp.size() >= 3 && string(Temp.end() - 3, Temp.end()) == "110")
+            x.push_back(c);
+            while (x.size() >= 3 && x.substr(x.size() - 3) == "110")
             {
-                Count++;
-                Temp.pop_back();Temp.pop_back();Temp.pop_back();
+                count++;
+                x.pop_back();x.pop_back();x.pop_back();
             }
         }
-        
-        int LastZero = -1;
-        for (int i = 0; i < Temp.size(); i++)
+                
+        int idx = -1;
+        for (int i = x.size() - 1; i >= 0; i--)
         {
-            if (Temp[i] == '0')
+            if (x[i] == '0')
             {
-                LastZero = i;
+                idx = i;
+                break;
             }
         }
+        idx++;
         
-        string res = string(Temp.begin(), Temp.begin() + LastZero + 1);
-        for (int i = 0; i < Count; i++)
+        string res(x.begin(), x.begin() + idx);
+        for (int i = 0; i < count; i++)
         {
             res.append("110");
         }
-        res.append(string(Temp.begin() + LastZero + 1, Temp.end()));
+        res.append(x.substr(idx));
         answer.push_back(res);
     }
-    
     return answer;
 }
