@@ -4,27 +4,24 @@
 
 using namespace std;
 
-long long GetRoom(long long rn, unordered_map<long long, long long>& um)
+long long GetParent(unordered_map<long long, long long>& Rooms, long long n)
 {
-    auto it = um.find(rn);
-    if (it == um.end())
+    if (Rooms.find(n) == Rooms.end())
     {
-        um[rn] = rn + 1;
-        return rn;
+        Rooms[n] = n + 1;
+        return n;
     }
     
-    it->second = GetRoom(it->second, um);
-    return it->second;
+    return Rooms[n] = GetParent(Rooms, Rooms[n]);
 }
 
 vector<long long> solution(long long k, vector<long long> room_number) {
-    unordered_map<long long, long long> um;
+    unordered_map<long long, long long> Rooms;
     vector<long long> answer;
     
     for (long long rn : room_number)
     {
-        long long Room = GetRoom(rn, um);
-        answer.push_back(Room);
+        answer.push_back(GetParent(Rooms, rn));
     }
     
     return answer;
