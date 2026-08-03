@@ -1,29 +1,27 @@
 #include <string>
 #include <vector>
 #include <set>
-
 using namespace std;
 
 int solution(vector<int> stones, int k) {
+    int Left = 0, Right = k;
     multiset<int> ms;
-    int Start = 0, End = k;
-    for (int i = Start; i < End; i++)
+    for (int i = Left; i < Right; i++)
     {
         ms.insert(stones[i]);
     }
     
-    int answer = *ms.rbegin();
-    while (End <= stones.size())
+    int answer = 200000000;
+    while (Right <= stones.size())
     {
-        const auto& it = ms.find(stones[Start++]);
+        answer = min(answer, *ms.rbegin());
+        auto it = ms.find(stones[Left++]);
         ms.erase(it);
-        if (End == stones.size())
+        if (Right == stones.size())
         {
             break;
         }
-        ms.insert(stones[End++]);
-        
-        answer = min(answer, *ms.rbegin());
+        ms.insert(stones[Right++]);
     }
     return answer;
 }
