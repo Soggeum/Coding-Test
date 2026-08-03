@@ -3,55 +3,45 @@
 
 using namespace std;
 
-void DFS(int Curr, vector<bool>& CanGo, const vector<int>& info, const vector<vector<int>>& Tree, int Sheep, int Wolf, int& MaxSheep)
+void DFS(int Curr, vector<bool>& CanGo, const vector<vector<int>>& Graphs, const vector<int>& info, int& MaxSheep, int Sheep, int Wolf)
 {
-    if (info[Curr])
-    {
-        Wolf++;
-    }
-    else
-    {
-        Sheep++;
-    }
-    if (Sheep <= Wolf)
+    info[Curr] ? Wolf++ : Sheep++;
+    if (Wolf >= Sheep)
     {
         return;
     }
+    MaxSheep = max(MaxSheep, Sheep);
     
-    if (Sheep > MaxSheep)
+    for (int Dest : Graphs[Curr])
     {
-        MaxSheep = Sheep;
+        CanGo[Dest] = true;
     }
     
-    for (int Next : Tree[Curr])
-    {
-        CanGo[Next] = true;
-    }
     for (int i = 0; i < CanGo.size(); i++)
     {
         if (CanGo[i])
         {
             CanGo[i] = false;
-            DFS(i, CanGo, info, Tree, Sheep, Wolf, MaxSheep);
+            DFS(i, CanGo, Graphs, info, MaxSheep, Sheep, Wolf);
             CanGo[i] = true;
         }
     }
-    for (int Next : Tree[Curr])
+    
+    for (int Dest : Graphs[Curr])
     {
-        CanGo[Next] = false;
+        CanGo[Dest] = false;
     }
 }
 
 int solution(vector<int> info, vector<vector<int>> edges) {
-    vector<vector<int>> Tree(info.size());
+    vector<bool> CanGo(info.size());
+    vector<vector<int>> Graphs(info.size());
     for (const vector<int>& e : edges)
     {
-        Tree[e[0]].push_back(e[1]);
+        Graphs[e[0]].push_back(e[1]);
     }
     
     int MaxSheep = 0;
-    vector<bool> CanGo(info.size(), false);
-    DFS(0, CanGo, info, Tree, 0, 0, MaxSheep);
-    
+    DFS(0, CanGo, Graphs, info, MaxSheep, 0, 0);
     return MaxSheep;
 }
