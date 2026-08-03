@@ -5,7 +5,13 @@ using namespace std;
 
 struct Node
 {
-    int Prev, Next;    
+    int Prev, Next;
+};
+
+struct SNode
+{
+    int Idx;
+    Node node;
 };
 
 string solution(int n, int k, vector<string> cmd) {
@@ -18,61 +24,68 @@ string solution(int n, int k, vector<string> cmd) {
     }
     Table[n - 1] = {n - 2, -1};
     
-    vector<int> Clear;
-    for (const string& s : cmd)
+    vector<SNode> Stack;
+    for (const string& c : cmd)
     {
-        if (s[0] == 'U')
+        if (c[0] == 'U')
         {
-            int X = stoi(s.substr(2));
-            while (X)
+            int X = stoi(c.substr(2));
+            for (int i = 0; i < X; i++)
             {
                 k = Table[k].Prev;
-                X--;
             }
         }
-        else if (s[0] == 'D')
+        else if (c[0] == 'D')
         {
-            int X = stoi(s.substr(2));
-            while (X)
+            int X = stoi(c.substr(2));
+            for (int i = 0; i < X; i++)
             {
                 k = Table[k].Next;
-                X--;
             }
         }
-        else if (s[0] == 'C')
+        else if (c[0] == 'C')
         {
+            Stack.push_back({k, Table[k]});
             if (Table[k].Prev != -1)
             {
-                Table[Table[k].Prev].Next = Table[k].Next;                
+                Table[Table[k].Prev].Next = Table[k].Next;
             }
-            if (Table[k].Next != -1)
+            if (Table[k].Next != - 1)
             {
-                Table[Table[k].Next].Prev = Table[k].Prev;    
+                Table[Table[k].Next].Prev = Table[k].Prev;
             }
-            Clear.push_back(k);
             
-            k = (Table[k].Next == -1 ? Table[k].Prev : Table[k].Next);
+            if (Table[k].Next == -1)
+            {
+                k = Table[k].Prev;
+            }
+            else
+            {
+                k = Table[k].Next;
+            }
         }
         else
         {
-            int ClearK = Clear.back();
-            Clear.pop_back();
+            int Idx = Stack.back().Idx;
+            Node node = Stack.back().node;
+            Stack.pop_back();
             
-            if (Table[ClearK].Prev != -1)
+            if (node.Prev != -1)
             {
-                Table[Table[ClearK].Prev].Next = ClearK;
+                Table[node.Prev].Next = Idx;
             }
-            if (Table[ClearK].Next != -1)
+            if (node.Next != -1)
             {
-                Table[Table[ClearK].Next].Prev = ClearK;
+                Table[node.Next].Prev = Idx;
             }
         }
     }
     
     string answer(n, 'O');
-    for (int i : Clear)
+    while (!Stack.empty())
     {
-        answer[i] = 'X';
+        answer[Stack.back().Idx] = 'X';
+        Stack.pop_back();
     }
     return answer;
 }
