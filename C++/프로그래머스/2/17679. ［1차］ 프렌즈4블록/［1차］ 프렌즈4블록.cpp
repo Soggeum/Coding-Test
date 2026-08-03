@@ -3,57 +3,65 @@
 
 using namespace std;
 
+struct Node
+{
+    char c;
+    bool flag;    
+};
+
 int solution(int m, int n, vector<string> board) {
-    bool bFlag = true;
-    while (bFlag)
+    vector<vector<Node>> Table(m, vector<Node>(n));
+    for (int i = 0; i < m ; i++)
     {
-        bFlag = false;
-        vector<vector<bool>> Delete(m, vector<bool>(n));
+        for (int j = 0;j < n; j++)
+        {
+            Table[i][j].c = board[i][j];
+        }
+    }
+    
+    bool wflag = false;
+    do {
+        wflag = false;
         for (int i = 0; i < m - 1; i++)
         {
-            for (int j = 0; j < n - 1; j++)
+            for (int j = 0;j < n - 1; j++)
             {
-                char c = board[i][j];
-                if (c == '0')
+                char c = Table[i][j].c;
+                if (c && c == Table[i][j + 1].c && c == Table[i + 1][j].c && c== Table[i + 1][j + 1].c)
                 {
-                    continue;
-                }
-                if (board[i][j + 1] == c && board[i + 1][j] == c && board[i + 1][j + 1] == c)
-                {
-                    bFlag = true;
-                    Delete[i][j] = true;
-                    Delete[i][j + 1] = true;
-                    Delete[i + 1][j] = true;
-                    Delete[i + 1][j + 1] = true;
+                    Table[i][j].flag = true;
+                    Table[i][j + 1].flag = true;
+                    Table[i + 1][j].flag = true;
+                    Table[i + 1][j + 1].flag = true;
                 }
             }
         }
         
-        for (int j = 0; j < n; j++)
+        for (int j= 0; j < n; j++)
         {
             for (int i = m - 1; i >= 0; i--)
             {
-                if (Delete[i][j])
+                if (Table[i][j].flag)
                 {
+                    wflag = true;
                     for (int k = i; k > 0; k--)
                     {
-                        board[k][j] = board[k - 1][j];
-                        Delete[k][j] = Delete[k - 1][j];
+                        Table[k][j] = Table[k - 1][j];
                     }
-                    board[0][j] = '0';
-                    Delete[0][j] = false;
+                    Table[0][j] = {0, false};
                     i++;
                 }
             }
-        }
     }
+    } while (wflag);
+    
     
     int answer = 0;
-    for (const string& s : board)
+    for (const vector<Node>& row : Table)
     {
-        for (char c : s)
+        for (const Node& n : row)
         {
-            if (c == '0')
+            if (n.c == 0)
             {
                 answer++;
             }
