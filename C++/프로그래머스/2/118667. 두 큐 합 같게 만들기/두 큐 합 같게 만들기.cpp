@@ -1,27 +1,30 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
-
 using namespace std;
 
 int solution(vector<int> queue1, vector<int> queue2) {
-    long long Sum = 0;
-    for (int n : queue1)
+    long long Total = 0;
+    for (int q : queue1)
     {
-        Sum += n;
+        Total += q;
     }
-    for (int n : queue2)
+    for (int q : queue2)
     {
-        Sum += n;
+        Total += q;
     }
-    if (Sum & 1)
+    if (Total & 1)
     {
         return -1;
     }
+    Total >>= 1;
     
-    Sum = Sum >> 1;
-    int answer = 0;
+    int Left = 0, Right = queue1.size();
+    long long sum = 0;
+    for (int i = 0; i < Right; i++)
+    {
+        sum += queue1[i];
+    }
     vector<int> q;
     for (int n : queue1)
     {
@@ -36,33 +39,27 @@ int solution(vector<int> queue1, vector<int> queue2) {
         q.push_back(n);
     }
     
-    int Start = 0, End = queue1.size();
-    long long Curr = 0;
-    for (int i = Start; i < End; i++)
+    int answer = 0;
+    while (Right <= q.size())
     {
-        Curr += q[i];
-    }
-    while(End <= q.size())
-    {
-        if (Curr == Sum)
+        if (sum < Total)
         {
-            return answer;
-        }
-        if (Curr < Sum)
-        {
-            if (End == q.size())
+            if (Right == q.size())
             {
                 return -1;
             }
-            Curr += q[End++];
-            answer++;
+            sum += q[Right++];
+        }
+        else if (sum == Total)
+        {
+            return answer;
         }
         else
         {
-            Curr -= q[Start++];
-            answer++;
+            sum -= q[Left++];
         }
+        answer++;
     }
     
-    return -1;
+    return answer;
 }
