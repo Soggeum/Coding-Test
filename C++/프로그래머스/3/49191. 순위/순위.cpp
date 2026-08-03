@@ -5,10 +5,10 @@ using namespace std;
 
 int solution(int n, vector<vector<int>> results) {
     vector<vector<int>> Table(n + 1, vector<int>(n + 1));
-    for (const vector<int>& r : results)
+    for (const vector<int>& v : results)
     {
-        Table[r[0]][r[1]] = 1;
-        Table[r[1]][r[0]] = -1;
+        Table[v[0]][v[1]] = 1;
+        Table[v[1]][v[0]] = -1;
     }
     
     for (int k = 1; k <= n; k++)
@@ -17,7 +17,7 @@ int solution(int n, vector<vector<int>> results) {
         {
             for (int j = 1; j <= n; j++)
             {
-                if (Table[i][k] != 0 && Table[i][k] == Table[k][j])
+                if (Table[i][k] && Table[i][k] == Table[k][j])
                 {
                     Table[i][j] = Table[i][k];
                 }
@@ -26,17 +26,17 @@ int solution(int n, vector<vector<int>> results) {
     }
     
     int answer = 0;
-    for (const vector<int>& row : Table)
+    for (int i = 1; i <= n; i++)
     {
-        int Count = 0;
-        for (int num : row)
+        int count = 0;
+        for (int j = 1;j <= n; j++)
         {
-            if (num)
+            if (Table[i][j])
             {
-                Count++;
+                count++;
             }
         }
-        if (Count == n - 1)
+        if (count == n - 1)
         {
             answer++;
         }
