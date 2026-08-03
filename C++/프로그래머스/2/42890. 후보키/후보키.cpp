@@ -5,45 +5,38 @@
 using namespace std;
 
 int solution(vector<vector<string>> relation) {
+    int row = relation.size(), col = relation[0].size();
     vector<int> answer;
-    
-    for (int i = 1; i < (1 << relation[0].size()); i++)
+    for (int bit = 1; bit < (1 << col); bit++)
     {
         unordered_set<string> us;
-        for (int r = 0; r < relation.size(); r++)
+        for (int i = 0; i < row; i++)
         {
-            string t;
-            for (int c = 0; c < relation[r].size(); c++)
+            string s;
+            for (int j = 0; j < col; j++)
             {
-                if (i & (1 << c))
+                if (bit & (1 << (col - 1 - j)))
                 {
-                    t.append(relation[r][c]);
-                    t.push_back(' ');
+                    s.append(relation[i][j]);
+                    s.push_back(' ');
                 }
             }
-            if (us.find(t) == us.end())
-            {
-                us.insert(t);
-            }
-            else
-            {
-                break;
-            }
+            us.insert(s);
         }
         
-        if (us.size() == relation.size())
+        if (us.size() == row)
         {
-            int idx = 0;
-            for (; idx < answer.size(); idx++)
+            int i = 0;
+            for (; i < answer.size(); i++)
             {
-                if ((answer[idx] & i) == answer[idx])
+                if ((answer[i] & bit) == answer[i])
                 {
                     break;
                 }
             }
-            if (idx == answer.size())
+            if (i == answer.size())
             {
-                answer.push_back(i);
+                answer.push_back(bit);
             }
         }
     }
