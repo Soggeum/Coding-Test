@@ -4,6 +4,11 @@
 using namespace std;
 
 int solution(int n, vector<int> cores) {
+    if (cores.size() >= n)
+    {
+        return n;
+    }
+    
     int Start = 1, End = 10000 * 50000, Time = End;
     while (Start <= End)
     {
