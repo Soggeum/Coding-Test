@@ -5,73 +5,58 @@ using namespace std;
 
 struct Node
 {
-    int Throw, SingleBull;    
+    int ThrowCount = 99999999, SB  = 99999999;
 };
 
 vector<int> solution(int target) {
-    vector<Node> DP(target + 1, {target + 1, 0});
-    vector<int> SB;
-    vector<int> DT;
-    for (int i = 1; i <= 20; i++)
+    vector<int> SingleBull = {1, 2, 3, 4, 5, 6, 7, 8,9, 10,11,12,13,14,15,16,17,18,19,20, 50};
+    vector<int> DoubleTriple;
+    for (int n = 21; n <= 60; n++)
     {
-        SB.push_back(i);
-        DT.push_back(i * 2);
-        DT.push_back(i * 3);
-    }
-    SB.push_back(50);
-    
-    for (int dt : DT)
-    {
-        if (dt < DP.size())
+        if (n % 2 == 0 && n / 2 <= 20)
         {
-            DP[dt] = {1, 0};            
+            DoubleTriple.push_back(n);
         }
-    }
-    for (int sb : SB)
-    {
-        if (sb < DP.size())
+        else if (n % 3 == 0 && n / 3 <= 20)
         {
-            DP[sb] = {1, 1};            
+            DoubleTriple.push_back(n);
         }
+            
     }
-    
-    for (int i = 1; i < target; i++)
+    vector<Node> score(target + 1);
+    score[0] = {0, 0};
+    for (int i = 0; i < target; i++)
     {
-        for (int sb : SB)
+        for (int sb : SingleBull)
         {
-            int NewScore = i + sb;
-            if (NewScore <= target)
+            if(i + sb <= target)
             {
-                if (DP[NewScore].Throw > DP[i].Throw + 1)
+                if (score[i + sb].ThrowCount > score[i].ThrowCount + 1)
                 {
-                    DP[NewScore].Throw = DP[i].Throw + 1;
-                    DP[NewScore].SingleBull = DP[i].SingleBull + 1;
+                    score[i+sb] = {score[i].ThrowCount + 1, score[i].SB + 1};
                 }
-                else if (DP[NewScore].Throw == DP[i].Throw + 1)
+                else if (score[i + sb].ThrowCount == score[i].ThrowCount + 1)
                 {
-                    DP[NewScore].SingleBull = max(DP[NewScore].SingleBull, DP[i].SingleBull + 1);
+                    score[i+sb].SB = max(score[i].SB + 1, score[i + sb].SB);
                 }
             }
         }
         
-        for (int dt : DT)
+        for (int dt : DoubleTriple)
         {
-            int NewScore = i + dt;
-            if (NewScore <= target)
+            if(i + dt <= target)
             {
-                if (DP[NewScore].Throw > DP[i].Throw + 1)
+                if (score[i + dt].ThrowCount > score[i].ThrowCount + 1)
                 {
-                    DP[NewScore].Throw = DP[i].Throw + 1;
-                    DP[NewScore].SingleBull = DP[i].SingleBull;
+                    score[i+dt] = {score[i].ThrowCount + 1, score[i].SB};
                 }
-                else if (DP[NewScore].Throw == DP[i].Throw + 1)
+                else if (score[i + dt].ThrowCount == score[i].ThrowCount + 1)
                 {
-                    DP[NewScore].SingleBull = max(DP[NewScore].SingleBull, DP[i].SingleBull);
+                    score[i+dt].SB = max(score[i].SB, score[i + dt].SB);
                 }
             }
         }
     }
     
-    
-    return {DP[target].Throw, DP[target].SingleBull};
+    return {score[target].ThrowCount, score[target].SB};
 }
