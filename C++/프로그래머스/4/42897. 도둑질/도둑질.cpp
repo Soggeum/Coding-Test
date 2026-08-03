@@ -11,14 +11,13 @@ int solution(vector<int> money) {
     {
         DP1[i] = max(DP1[i - 2] + money[i], DP1[i - 1]);
     }
-    int answer = DP1[money.size() - 2];
+    DP1[money.size() - 1] = DP1[money.size() - 2];
     
-    DP2[0] = 0;
-    DP2[1] = money[1];
-    for (int i = 2; i< money.size(); i++)
+    DP2[0] = 0; DP2[1] = money[1];
+    for (int i = 2; i < money.size(); i++)
     {
         DP2[i] = max(DP2[i - 2] + money[i], DP2[i - 1]);
     }
-    answer = max(answer, DP2[money.size()  -1]);
-    return answer;
+    
+    return max(DP1.back(), DP2.back());
 }
