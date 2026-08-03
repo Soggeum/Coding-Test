@@ -9,25 +9,25 @@ int solution(int distance, vector<int> rocks, int n) {
     int Start = 1, End = distance, answer = 0;
     while (Start <= End)
     {
-        int Count = 0, Mid = (Start + End) / 2;
-        int Last = 0;
-        for (int rock : rocks)
+        int Mid = (Start + End) / 2;
+        int Last = 0, count = 0;
+        for (int r : rocks)
         {
-            if (rock - Last >= Mid)
+            if (r - Last >= Mid)
             {
-                Last = rock;
+                Last = r;
             }
             else
             {
-                Count++;
+                count++;
             }
         }
         if (distance - Last < Mid)
         {
-            Count++;
+            count++;
         }
         
-        if (Count <= n)
+        if (count <= n)
         {
             answer = max(answer, Mid);
             Start = Mid + 1;
@@ -37,6 +37,5 @@ int solution(int distance, vector<int> rocks, int n) {
             End = Mid - 1;
         }
     }
-    
     return answer;
 }
