@@ -1,14 +1,14 @@
 using namespace std;
 
-int GCD(int w, int h)
+int GCD(int a, int b)
 {
-    if (h == 0)
+    if (b == 0)
     {
-        return w;
+        return a;
     }
-    return GCD(h, w % h);
+    return GCD(b, a % b);
 }
 
 long long solution(int w,int h) {
-    return 1ll * w * h - (1ll * w + h - GCD(w, h));
+    return 1ll * w * h - (1ll*w + h - GCD(w, h));
 }
