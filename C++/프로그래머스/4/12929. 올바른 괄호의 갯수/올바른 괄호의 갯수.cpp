@@ -11,7 +11,7 @@ int solution(int n) {
     {
         for (int j = 0; j < i; j++)
         {
-            DP[i] += DP[j] * DP[i - 1 - j];
+            DP[i] += DP[j] * DP[i - j - 1];
         }
     }
     return DP[n];
