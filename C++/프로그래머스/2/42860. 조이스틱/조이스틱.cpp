@@ -10,21 +10,17 @@ int solution(string name) {
         answer += min(c - 'A', 'Z' - c + 1);
     }
     
-    int move = name.size() - 1;
+    int Move = name.size() - 1;
     for (int i = 0; i < name.size(); i++)
     {
-        if (name[i] == 'A')
+        int LastA = i;
+        while (LastA < name.size() && name[LastA] == 'A')
         {
-            int LastA = i;
-            while (LastA < name.size() && name[LastA] == 'A')
-            {
-                LastA++;
-            }
-            int option1 = 2 * max(0, i - 1) + (name.size() - LastA);
-            int option2 = 2 * (name.size() - LastA) + max(0, i - 1);
-            move = min(move, min(option1, option2));
+            LastA++;
         }
+        int opt1 = 2 * max(0, i - 1) + name.size() - LastA;
+        int opt2 = 2 * (name.size() - LastA) + max(0, i - 1);
+        Move = min(Move, min(opt1, opt2));
     }
-    
-    return answer + move;
+    return answer + Move;
 }
