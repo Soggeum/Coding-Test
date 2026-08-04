@@ -8,55 +8,52 @@ using namespace std;
 struct Node
 {
     string Dest;
-    bool bUsed;    
-    bool operator<(const Node& Other)
+    bool bUsed;
+    
+    bool operator<(const Node& Other) const
     {
         return Dest < Other.Dest;
     }
 };
 
-void DFS(unordered_map<string, vector<Node>>& um, vector<string>& answer, int UseCount, int TotalTickets, bool& bReturnFlag)
+void DFS(vector<string>& answer, unordered_map<string, vector<Node>>& um, int& TicketNum)
 {
-    if (bReturnFlag)
+    if (answer.size() == TicketNum + 1)
     {
-        return;
-    }
-    if (UseCount == TotalTickets)
-    {
-        bReturnFlag = true;
         return;
     }
     
-    for (Node& Next : um[answer.back()])
+    string Curr = answer.back();
+    for (Node& n : um[Curr])
     {
-        if (!Next.bUsed)
+        if (!n.bUsed)
         {
-            Next.bUsed = true;
-            answer.push_back(Next.Dest);
-            DFS(um, answer, UseCount + 1, TotalTickets, bReturnFlag);
-            if (bReturnFlag)
+            answer.push_back(n.Dest);
+            n.bUsed = true;
+            DFS(answer, um, TicketNum);
+            if (answer.size() == TicketNum + 1)
             {
                 return;
             }
+            n.bUsed = false;
             answer.pop_back();
-            Next.bUsed = false;
         }
     }
 }
 
 vector<string> solution(vector<vector<string>> tickets) {
     unordered_map<string, vector<Node>> um;
-    for (const vector<string>& ticket : tickets)
+    for (const vector<string>& t : tickets)
     {
-        um[ticket[0]].push_back({ticket[1], false});
+        um[t[0]].push_back({t[1], false});
     }
     for (auto& it : um)
     {
         sort(it.second.begin(), it.second.end());
     }
-        
-    vector<string> answer = {"ICN"};
-    bool bReturnFlag = false;
-    DFS(um, answer, 0, tickets.size(), bReturnFlag);
+    
+    vector<string> answer={"ICN"};
+    int n = tickets.size();
+    DFS(answer, um, n);
     return answer;
 }
