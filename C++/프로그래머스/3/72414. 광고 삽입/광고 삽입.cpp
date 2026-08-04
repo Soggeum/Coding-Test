@@ -3,87 +3,78 @@
 
 using namespace std;
 
-int GetSec(const string& Time)
+int GetTime(const string& Time)
 {
-    int Res = 0;
-    Res += stoi(Time.substr(0, 2)) * 60 * 60;
-    Res += stoi(Time.substr(3, 2)) * 60;
-    Res += stoi(Time.substr(6, 2));
-    return Res;
+    int res = 0;
+    string Hour = Time.substr(0, 2), Min = Time.substr(3, 2), Sec = Time.substr(6);
+    return res += stoi(Hour) * 60 *60 + stoi(Min) * 60 + stoi(Sec);
 }
 
-string GetTime(int Sec)
+string ToStr(int Time)
 {
-    int Hour = Sec / (60 * 60);
-    Sec -= Hour * 60 * 60;
-    int Min = Sec / 60;
-    Sec -= Min * 60;
+    string res;
+    int S = Time % 60;
+    Time /= 60;
+    int M = Time % 60;
+    Time /= 60;
+    int H = Time;
     
-    string Res;
-    if (Hour < 10)
+    if (H < 10)
     {
-        Res.push_back('0');
+        res.push_back('0');
     }
-    Res.append(to_string(Hour));
-    Res.push_back(':');
-    if (Min < 10)
+    res.append(to_string(H));
+    res.push_back(':');
+    if (M < 10)
     {
-        Res.push_back('0');
+        res.push_back('0');
     }
-    Res.append(to_string(Min));
-    Res.push_back(':');
-    if (Sec < 10)
+    res.append(to_string(M));
+    res.push_back(':');
+    if (S < 10)
     {
-        Res.push_back('0');
+        res.push_back('0');
     }
-    Res.append(to_string(Sec));
+    res.append(to_string(S));
     
-    return Res;
+    return res;
 }
 
 string solution(string play_time, string adv_time, vector<string> logs) {
-    vector<int> Table(GetSec(play_time));
+    int PlayTime = GetTime(play_time);
+    vector<int> Table(PlayTime + 1);
     for (const string& log : logs)
     {
-        string Start = log.substr(0, 8), End = log.substr(9);
-        int start_sec = GetSec(Start);
-        int end_sec = GetSec(End);
-
-        Table[start_sec] += 1;
-        if (end_sec < Table.size())
-        {
-            Table[end_sec] -= 1; 
-        }
+        int StartTime = GetTime(log.substr(0, 8)), EndTime = GetTime(log.substr(9, 8));
+        Table[StartTime] += 1;
+        Table[EndTime] -= 1;
     }
-    
     for (int i = 1; i < Table.size(); i++)
     {
         Table[i] += Table[i - 1];
     }
     
-    int Start = 0, End = GetSec(adv_time);
-    long long Sum = 0, MaxSum = 0;
+    int Start = 0, End = GetTime(adv_time);
+    long long count = 0, Max = 0;
+    string answer;
     for (int i = Start; i < End; i++)
     {
-        Sum += Table[i];
+        count += Table[i];
     }
-    
-    string answer = "00:00:00";
-    while (End <= Table.size())
+    while (End <= PlayTime)
     {
-        if (Sum > MaxSum)
+        if (count > Max)
         {
-            answer = GetTime(Start);
-            MaxSum = Sum;
+            answer = ToStr(Start);
+            Max = count;
         }
-        
-        Sum -= Table[Start++];
-        if (End == Table.size())
+        count -= Table[Start++];
+        if (End == PlayTime)
         {
             break;
         }
-        Sum += Table[End++];
+        count += Table[End++];
     }
-    
+       
     return answer;
 }
