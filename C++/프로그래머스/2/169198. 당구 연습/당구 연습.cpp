@@ -4,27 +4,28 @@
 using namespace std;
 
 vector<int> solution(int m, int n, int startX, int startY, vector<vector<int>> balls) {
-    vector<int> answer;
+    vector<int> res;
     for (const vector<int>& ball : balls)
     {
-        int Dist = 999999999, x = ball[0], y = ball[1];
-        if (!(startY == y && startX < x))
+        int a = ball[0], b = ball[1];
+        int answer = 999999999;
+        if (!(startX == a && startY < b))
         {
-            Dist = min(Dist, (y - startY) * (y - startY) + (2 * m - x - startX) * (2 * m - x - startX));
+            answer = min(answer, (startX - a)*(startX - a) + (n*2 - b - startY)*(n*2 - b - startY));
         }
-        if (!(startY == y && startX > x))
+        if (!(startX == a && startY > b))
         {
-            Dist = min(Dist, (y - startY) * (y - startY) + (x + startX) * (x + startX));
+            answer = min(answer, (startX - a)*(startX - a) + (b + startY)*(b + startY));
         }
-        if (!(startX==x && startY < y))
+        if (!(startY == b && startX < a))
         {
-            Dist = min(Dist, (startX - x) * (startX - x) + (2 * n - startY - y) * (2 * n - startY - y));
+            answer = min(answer, (2*m - startX - a)*(2*m -startX - a) + (b - startY)*(b - startY));
         }
-        if (!(startX==x && startY > y))
+        if (!(startY == b && startX > a))
         {
-            Dist = min(Dist, (startX - x) * (startX - x) + (startY + y) * (startY + y));
-        } 
-        answer.push_back(Dist);
+            answer = min(answer, (startX + a)*(startX + a) + (b - startY)*(b - startY));
+        }
+        res.push_back(answer);
     }
-    return answer;
+    return res;
 }
