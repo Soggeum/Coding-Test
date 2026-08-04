@@ -1,16 +1,14 @@
 #include <string>
 #include <vector>
-#include <unordered_set>
 
 using namespace std;
 
 int solution(int N, int number) {
-    int answer = 0;
-    vector<unordered_set<int>> Table(8 + 1);
+    vector<vector<int>> Table(9);
     for (int i = 1; i < 9; i++)
     {
-        Table[i].insert(stoi(string(i, '0' + N)));
-        if (Table[i].find(number) != Table[i].end())
+        Table[i].push_back(stoi(string(i, N + '0')));
+        if (Table[i][0] == number)
         {
             return i;
         }
@@ -24,28 +22,41 @@ int solution(int N, int number) {
             {
                 for (int op2 : Table[i - j])
                 {
-                    int Value = op1 + op2;
-                    Table[i].insert(Value);
+                    int num = op1 + op2;
+                    if (num == number)
+                    {
+                        return i;
+                    }
+                    Table[i].push_back(num);
                     
-                    Value = op1 - op2;
-                    Table[i].insert(Value);
+                    num = op1 - op2;
+                    if (num == number)
+                    {
+                        return i;
+                    }
+                    Table[i].push_back(num);
                     
-                    Value = op1 * op2;
-                    Table[i].insert(Value);
+                    num = op1 * op2;
+                    if (num == number)
+                    {
+                        return i;
+                    }
+                    Table[i].push_back(num);
                     
                     if (op2 != 0)
                     {
-                        Value = op1 / op2;
-                        Table[i].insert(Value);
+                        num = op1 / op2;
+                        if (num == number)
+                        {
+                            return i;
+                        }
+                        Table[i].push_back(num);
                     }
                 }
             }
         }
-        if (Table[i].find(number) != Table[i].end())
-        {
-            return i;
-        }
     }
+    
     
     return -1;
 }
