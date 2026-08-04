@@ -4,29 +4,26 @@
 using namespace std;
 
 vector<int> solution(long long begin, long long end) {
-    vector<int> answer;
-    for (int i = begin; i <= end; i++)
+    vector<int> answer(end - begin + 1, 1);
+    for (long long i = begin; i <= end; i++)
     {
-        int num = 1;
         for (int j = 2; j * j <= i; j++)
         {
             if (i % j == 0)
             {
-                if  (i / j > 10000000)
+                long long n = i / j;
+                if (n <= 10000000)
                 {
-                    num = j;
+                    answer[i - begin] = n;
+                    break;
                 }
                 else
                 {
-                    num = i / j;
-                    break;
+                    answer[i - begin] = j;
                 }
-                
             }
         }
-        answer.push_back(num);
     }
-    
     if (begin == 1)
     {
         answer[0] = 0;
