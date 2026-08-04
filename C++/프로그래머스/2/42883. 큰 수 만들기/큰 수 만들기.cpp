@@ -5,21 +5,14 @@ using namespace std;
 
 string solution(string number, int k) {
     string answer = "";
-    for (int i = 0; i < number.size(); i++)
+    for (char c : number)
     {
-        while (k && !answer.empty())
+        while (k &&!answer.empty() && answer.back() < c)
         {
-            if (answer.back() < number[i])
-            {
-                answer.pop_back();
-                k--;
-            }
-            else
-            {
-                break;
-            }
+            answer.pop_back();
+            k--;
         }
-        answer.push_back(number[i]);
+        answer.push_back(c);
     }
     
     while (k)
@@ -27,6 +20,5 @@ string solution(string number, int k) {
         answer.pop_back();
         k--;
     }
-    
     return answer;
 }
