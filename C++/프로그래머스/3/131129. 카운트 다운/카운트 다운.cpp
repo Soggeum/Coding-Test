@@ -5,58 +5,65 @@ using namespace std;
 
 struct Node
 {
-    int ThrowCount = 99999999, SB  = 99999999;
+    int Count, SB;    
 };
 
 vector<int> solution(int target) {
-    vector<int> SingleBull = {1, 2, 3, 4, 5, 6, 7, 8,9, 10,11,12,13,14,15,16,17,18,19,20, 50};
-    vector<int> DoubleTriple;
-    for (int n = 21; n <= 60; n++)
+    vector<int> SingleBull;
+    for (int i = 1; i <= 20; i++)
     {
-        if (n % 2 == 0 && n / 2 <= 20)
-        {
-            DoubleTriple.push_back(n);
-        }
-        else if (n % 3 == 0 && n / 3 <= 20)
-        {
-            DoubleTriple.push_back(n);
-        }
-            
+        SingleBull.push_back(i);
     }
-    vector<Node> score(target + 1);
-    score[0] = {0, 0};
+    SingleBull.push_back(50);
+    
+    vector<int> DoubleTriple;
+    for (int i = 21; i <= 60; i++)
+    {
+        if (i % 2 == 0 && i / 2 <= 20)
+        {
+            DoubleTriple.push_back(i);
+        }
+        else if (i % 3 == 0 && i / 3 <= 20)
+        {
+            DoubleTriple.push_back(i);            
+        }
+    }
+    
+    vector<Node> DP(target + 1, {99999999, 0});
+    DP[0] = {0, 0};
     for (int i = 0; i < target; i++)
     {
-        for (int sb : SingleBull)
+        for (int d : SingleBull)
         {
-            if(i + sb <= target)
+            if (i + d <= target)
             {
-                if (score[i + sb].ThrowCount > score[i].ThrowCount + 1)
+                if (DP[i + d].Count > DP[i].Count + 1)
                 {
-                    score[i+sb] = {score[i].ThrowCount + 1, score[i].SB + 1};
+                    DP[i + d] = {DP[i].Count + 1, DP[i].SB + 1};
                 }
-                else if (score[i + sb].ThrowCount == score[i].ThrowCount + 1)
+                else if (DP[i + d].Count == DP[i].Count + 1)
                 {
-                    score[i+sb].SB = max(score[i].SB + 1, score[i + sb].SB);
+                    DP[i + d].SB = max(DP[i + d].SB, DP[i].SB + 1);
                 }
             }
         }
         
-        for (int dt : DoubleTriple)
+        for (int d : DoubleTriple)
         {
-            if(i + dt <= target)
+            if (i + d <= target)
             {
-                if (score[i + dt].ThrowCount > score[i].ThrowCount + 1)
+                if (DP[i + d].Count > DP[i].Count + 1)
                 {
-                    score[i+dt] = {score[i].ThrowCount + 1, score[i].SB};
+                    DP[i + d] = {DP[i].Count + 1, DP[i].SB};
                 }
-                else if (score[i + dt].ThrowCount == score[i].ThrowCount + 1)
+                else if (DP[i + d].Count == DP[i].Count + 1)
                 {
-                    score[i+dt].SB = max(score[i].SB, score[i + dt].SB);
+                    DP[i + d].SB = max(DP[i + d].SB, DP[i].SB);
                 }
             }
         }
     }
     
-    return {score[target].ThrowCount, score[target].SB};
+    
+    return {DP[target].Count, DP[target].SB};
 }
