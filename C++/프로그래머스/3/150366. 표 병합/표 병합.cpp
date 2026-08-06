@@ -4,132 +4,116 @@
 
 using namespace std;
 
-struct Cell
+struct Node
 {
-    string Value;
-    Cell* Parent;
-    
-    Cell* Merge(Cell* NewParent)
-    {
-        if (Parent == this)
-        {
-            Parent = NewParent;
-            return Parent;
-        }
-        return Parent = Parent->Merge(NewParent);
-    }
-    
-    Cell* GetParent()
-    {
-        if (Parent == this)
-        {
-            return Parent;
-        }
-        return Parent = Parent->GetParent();
-    }
-    
-    string GetValue()
-    {
-        if (Parent == this)
-        {
-            return Value;
-        }
-        return GetParent()->GetValue();
-    }
+    int Parent;
+    string Value;    
 };
 
-vector<string> solution(vector<string> commands) {
-    vector<vector<Cell>> Table(50, vector<Cell>(50));
-    for (int i = 0; i < 50; i++)
+int GetParent(int Idx, vector<Node>& Table)
+{
+    if (Idx == Table[Idx].Parent)
     {
-        for (int j = 0; j < 50; j++)
-        {
-            Table[i][j].Parent = &(Table[i][j]);
-        }
+        return Idx;
+    }
+    return Table[Idx].Parent = GetParent(Table[Idx].Parent, Table);
+}
+
+string& GetValue(int Idx, vector<Node>& Table)
+{
+    int Parent = GetParent(Idx, Table);
+    return Table[Parent].Value;
+}
+
+void Merge(int i1, int i2, vector<Node>& Table)
+{
+    int Parent1 = GetParent(i1, Table), Parent2 = GetParent(i2, Table);
+    if (Parent1 == Parent2)
+    {
+        return;
+    }
+    string s1 = Table[Parent1].Value, s2 = Table[Parent2].Value;
+    if (!s1.empty())
+    {
+        Table[Parent2].Parent = Parent1;
+    }
+    else
+    {
+        Table[Parent1].Parent = Parent2;
+    }
+}
+
+vector<string> solution(vector<string> commands) {
+    vector<Node> Table(50 * 50);
+    for (int i = 0; i <Table.size(); i++)
+    {
+        Table[i].Parent = i;
     }
     
     vector<string> answer;
-    for (const string& command : commands)
+    for (const string& c : commands)
     {
-        string SplitCommand, Value1, Value2;
-        int r1, r2, c1, c2;
-        
-        if (command[0] == 'P')
+        stringstream ss(c);
+        string command;
+        ss >> command;
+        if (command == "UPDATE")
         {
-            stringstream ss(command);
-            ss >> SplitCommand >> r1 >> c1;
-            r1--; c1--;
-            string Value = Table[r1][c1].GetValue();
-            answer.push_back(Value.empty() ? "EMPTY" : Value);
-        }
-        else if (command.substr(0, 2) == "UP")
-        {
-            stringstream ss(command);
             string a, b, c;
-            ss >> SplitCommand >> a >> b >> c;
+            ss >> a >> b >> c;
             if (c.empty())
             {
-                Value1 = a;
-                Value2 = b;
-                for (vector<Cell>& row : Table)
+                for (int i = 0; i < Table.size(); i++)
                 {
-                    for (Cell& cell : row)
+                    string& Value = GetValue(i, Table);
+                    if (Value == a)
                     {
-                        if (cell.GetValue() == Value1)
-                        {
-                            cell.GetParent()->Value = Value2;
-                        }
+                        Value = b;
                     }
                 }
             }
             else
             {
-                r1 = stoi(a);
-                c1 = stoi(b);
-                r1--; c1--;
-                Value1 = c;
-                Table[r1][c1].GetParent()->Value = Value1;
+                int row = stoi(a), col = stoi(b);
+                row--; col--;
+                GetValue(row * 50 + col, Table) = c;
             }
         }
-        else if (command[0] == 'M')
+        else if (command == "MERGE")
         {
-            stringstream ss(command);
-            ss >> SplitCommand >> r1 >> c1 >> r2 >> c2;
+            int r1, c1, r2, c2;
+            ss >> r1 >> c1 >> r2 >> c2;
             r1--; c1--; r2--; c2--;
-            if (!(Table[r1][c1].GetValue().empty()))
+            Merge(r1 * 50 + c1, r2 * 50 + c2, Table);
+        }
+        else if (command == "UNMERGE")
+        {
+            int r, c;
+            ss >> r >> c;
+            r--; c--;
+            string Value = GetValue(r * 50 + c, Table);
+            int P = GetParent(r * 50 + c, Table);
+            vector<int> Del;
+            for (int i = 0; i < Table.size(); i++)
             {
-                Table[r2][c2].GetParent()->Merge(Table[r1][c1].GetParent());
+                if (GetParent(i, Table) == P)
+                {
+                    Del.push_back(i);
+                }
             }
-            else
+            for (int i : Del)
             {
-               Table[r1][c1].GetParent()->Merge(Table[r2][c2].GetParent());
+                Table[i].Parent = i;
+                Table[i].Value.clear();
             }
+            Table[r * 50 + c].Value = Value;
         }
         else
         {
-            stringstream ss(command);
-            ss >> SplitCommand >> r1 >> c1;
-            r1--; c1--;
-            Cell* Parent = Table[r1][c1].GetParent();
-            string Value = Parent->GetValue();
-            vector<Cell*> Target;
-            for (vector<Cell>& row : Table)
-            {
-                for (Cell& cell : row)
-                {
-                    if (cell.GetParent() == Parent)
-                    {
-                        Target.push_back(&cell);
-                    }
-                }
-            }
-            
-            for (Cell* cell : Target)
-            {
-                cell->Parent = cell;
-                cell->Value.clear();
-            }
-            Table[r1][c1].Value = Value;
+            int r, c;
+            ss >> r >> c;
+            r--; c--;
+            string& res = GetValue(r * 50 + c, Table);
+            answer.push_back(res.empty() ? "EMPTY" : res);
         }
     }
     return answer;
