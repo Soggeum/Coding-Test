@@ -13,14 +13,17 @@ int solution(string name) {
     int Move = name.size() - 1;
     for (int i = 0; i < name.size(); i++)
     {
-        int LastA = i;
-        while (LastA < name.size() && name[LastA] == 'A')
+        if (name[i] == 'A')
         {
-            LastA++;
+            int LastA = i;
+            while (LastA < name.size() && name[LastA] == 'A')
+            {
+                LastA++;
+            }
+            int opt1 = 2 * max(0, i-1) + name.size() - LastA;
+            int opt2 = 2 * (name.size() - LastA) + max(0 ,  i - 1);
+            Move = min(Move, min(opt1, opt2));
         }
-        int opt1 = 2 * max(0, i - 1) + name.size() - LastA;
-        int opt2 = 2 * (name.size() - LastA) + max(0, i - 1);
-        Move = min(Move, min(opt1, opt2));
     }
     return answer + Move;
 }
