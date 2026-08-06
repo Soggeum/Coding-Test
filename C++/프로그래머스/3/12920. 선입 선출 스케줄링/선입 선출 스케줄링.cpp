@@ -4,19 +4,19 @@
 using namespace std;
 
 int solution(int n, vector<int> cores) {
-    if (cores.size() >= n)
+    if (n <= cores.size())
     {
         return n;
     }
     
-    int Start = 1, End = 10000 * 50000, Time = End;
+    long long Start = 1, End = n * 10000, Time = End;
     while (Start <= End)
     {
-        int Mid = (Start + End) / 2 ;
+        long long Mid = (Start + End) / 2;
         long long Count = 0;
         for (int c : cores)
         {
-            Count += 1 + Mid / c;
+            Count += Mid / c + 1;
         }
         
         if (Count >= n)
@@ -30,21 +30,21 @@ int solution(int n, vector<int> cores) {
         }
     }
     
-    int Count = cores.size();
+    int Cnt = 0;
     for (int i = 0; i < cores.size(); i++)
     {
-        Count += (Time - 1) / cores[i];
+        Cnt += (Time - 1) / cores[i] + 1;
     }
     for (int i = 0; i < cores.size(); i++)
     {
         if (Time % cores[i] == 0)
         {
-            Count++;
-            if (Count == n)
-            {
-                return i + 1;
-            }
+            Cnt++;
+        }
+        if (Cnt == n)
+        {
+            return i + 1;
         }
     }
-    return 1;
+    return cores.size();
 }
