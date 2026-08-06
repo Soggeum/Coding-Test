@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -9,29 +8,34 @@ string GetBin(long long n)
     string res;
     while (n)
     {
-        res.push_back('0' + n % 2);
-        n /= 2;
+        res.push_back((n & 1) + '0');
+        n >>= 1;
     }
     return string(res.rbegin(), res.rend());
 }
 
-bool IsCBT(const string& CBT, int Left, int Root, int Right)
+bool IsTree(const string& s, int left, int root, int right)
 {
-    if (Left == Root && Root == Right)
+    if (left == root && right == root)
     {
         return true;
     }
-    
-    if (CBT[Root] == '1')
+    if (s[root] == '1')
     {
-        return IsCBT(CBT, Left, (Left + Root - 1) / 2, Root - 1) && 
-            IsCBT(CBT, Root + 1, (Root + 1 + Right) / 2, Right);
+        if (IsTree(s, left, (left + root - 1) / 2, root - 1) && IsTree(s, root + 1, (root + 1 + right) / 2, right))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
-        for (int i = Left; i <= Right; i++)
+        for (int i = left; i <= right; i++)
         {
-            if (CBT[i] == '1')
+            if (s[i] == '1')
             {
                 return false;
             }
@@ -41,23 +45,19 @@ bool IsCBT(const string& CBT, int Left, int Root, int Right)
 }
 
 vector<int> solution(vector<long long> numbers) {
-    vector<int> CBT;
-    int Num = 1;
-    while (Num <= 64)
-    {
-        CBT.push_back(Num);
-        Num = Num * 2 + 1;
-    }
-    
     vector<int> answer;
     for (long long number : numbers)
     {
         string Bin = GetBin(number);
-        int CBTNum = *lower_bound(CBT.begin(), CBT.end(), Bin.size());
-        string CBTBin(CBTNum - Bin.size(), '0');
-        CBTBin.append(Bin);
+        int i = 1;
+        while (i < Bin.size())
+        {
+            i = 2 * i + 1;
+        }
+        string s(i - Bin.size(), '0');
+        s.append(Bin);
         
-        if (IsCBT(CBTBin, 0, (CBTBin.size() - 1) / 2, CBTBin.size() - 1))
+        if (IsTree(s, 0, i / 2, i - 1))
         {
             answer.push_back(1);
         }
