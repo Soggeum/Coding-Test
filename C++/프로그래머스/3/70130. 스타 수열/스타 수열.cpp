@@ -4,28 +4,32 @@
 using namespace std;
 
 int solution(std::vector<int> a) {
-    vector<int> LastIdx(a.size() , -1);
-    vector<int> Num(a.size());
+    vector<int> LastUsed(a.size(), -1);
+    vector<int> Count(a.size());
     
     for (int i = 0; i < a.size(); i++)
     {
-        int num = a[i];
-        if (i - 1 != LastIdx[num] && a[i - 1] != num)
+        int n = a[i];
+        if (LastUsed[n] != i - 1)
         {
-            Num[num] += 2;
-            LastIdx[num] = i;
+            Count[n] += 2;
+            LastUsed[n] = i;
         }
-        else if (i + 1 < a.size() && a[i + 1] != num)
+        else if (i + 1 < a.size() && a[i + 1] != n)
         {
-            Num[num] += 2;
-            LastIdx[num] = i + 1;
+            Count[n] += 2;
+            LastUsed[n] = i + 1;
+        }
+        else
+        {
+            LastUsed[n] = i;
         }
     }
     
     int answer = 0;
-    for (int n : Num)
+    for (int i = 0; i < Count.size(); i++)
     {
-        answer = max(answer, n);
+        answer = max(answer, Count[i]);
     }
     return answer;
 }
