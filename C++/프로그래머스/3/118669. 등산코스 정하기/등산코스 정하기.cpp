@@ -3,68 +3,61 @@
 #include <queue>
 #include <unordered_set>
 
+using namespace std;
+
 struct Edge
 {
-    int Dest, Weight;
+    int Dest, Weight;    
 };
 
 struct Node
 {
-    int Curr, Intensity;
+    int Curr, Intensity;    
     bool operator<(const Node& Other) const
     {
         return Intensity > Other.Intensity;
     }
 };
 
-using namespace std;
-
 vector<int> solution(int n, vector<vector<int>> paths, vector<int> gates, vector<int> summits) {
+    vector<vector<Edge>> Graphs(n + 1);
+    for (const vector<int>& p : paths)
+    {
+        Graphs[p[0]].push_back({p[1], p[2]});
+        Graphs[p[1]].push_back({p[0], p[2]});
+    }
+    
     unordered_set<int> s;
     for (int summit : summits)
     {
         s.insert(summit);
     }
     
-    vector<vector<Edge>> Graphs(n + 1);
-    for (const vector<int>& path : paths)
-    {
-        int i = path[0], j = path[1], w = path[2];
-        Graphs[i].push_back({j, w});
-        Graphs[j].push_back({i, w});
-    }
-    
-    vector<int> answer = {n, 90000000};
-    vector<int> Visited(n + 1, 90000000);
     priority_queue<Node> pq;
-    for (int gate : gates)
+    vector<bool> Visited(n + 1);
+    for (int g : gates)
     {
-        pq.push({gate, 0});
-        Visited[gate] = 0;
+        pq.push({g, 0});
     }
+    vector<int> answer = {50001, 10000001};
     while (!pq.empty())
     {
         int Curr = pq.top().Curr, Intensity = pq.top().Intensity;
         pq.pop();
         
-        if (Intensity > Visited[Curr])
+        if (Visited[Curr])
         {
             continue;
         }
-        Visited[Curr] = Intensity;
-        
-        if (Intensity > answer[1])
-        {
-            continue;
-        }
+        Visited[Curr] = true;
         
         if (s.find(Curr) != s.end())
         {
-            if (answer[1] == Intensity)
+            if (Intensity == answer[1])
             {
                 answer[0] = min(answer[0], Curr);
             }
-            else if (answer[1] > Intensity)
+            else if (Intensity < answer[1])
             {
                 answer = {Curr, Intensity};
             }
@@ -73,10 +66,9 @@ vector<int> solution(int n, vector<vector<int>> paths, vector<int> gates, vector
         
         for (const Edge& e : Graphs[Curr])
         {
-            int NewIntensity = max(Intensity, e.Weight);
-            if (NewIntensity < Visited[e.Dest])
+            if (!Visited[e.Dest])
             {
-                pq.push({e.Dest, NewIntensity});
+                pq.push({e.Dest, max(Intensity, e.Weight)});
             }
         }
     }
