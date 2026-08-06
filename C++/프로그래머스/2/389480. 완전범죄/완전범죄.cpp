@@ -4,39 +4,39 @@
 using namespace std;
 
 int solution(vector<vector<int>> info, int n, int m) {
-    vector<vector<int>> DP(info.size(), vector<int>(m, n));
+    vector<vector<int>> Table(info.size(), vector<int>(m, n));
     if (info[0][0] < n)
     {
-        DP[0][0] = info[0][0];
+        Table[0][0] = info[0][0];
     }
     if (info[0][1] < m)
     {
-        DP[0][info[0][1]] = 0;
+        Table[0][info[0][1]] = 0;
     }
     
-    for (int i = 0; i < info.size() - 1; i++)
+    for (int i = 1; i < info.size(); i++)
     {
-        int NextA = info[i + 1][0], NextB = info[i + 1][1];
         for (int j = 0; j < m; j++)
         {
-            if (DP[i][j] < n)
+            int A = info[i][0], B = info[i][1];
+            if (j - B >= 0)
             {
-                if (DP[i][j] + NextA < n)
-                {
-                    DP[i + 1][j] = min(DP[i + 1][j], DP[i][j] + NextA);
-                }
-                if (j + NextB < m)
-                {
-                    DP[i + 1][j + NextB] = min(DP[i + 1][j + NextB], DP[i][j]);
-                }
+                Table[i][j] = Table[i - 1][j - B];            
+            }
+            if (Table[i - 1][j] + A < n)
+            {
+                Table[i][j] = min(Table[i][j], Table[i - 1][j] + A);
             }
         }
     }
-        
     int answer = n;
-    for (int n : DP.back())
+    for (int x : Table.back())
     {
-        answer = min(answer, n);
+        if (x < answer)
+        {
+            answer = x;
+        }
     }
+    
     return answer == n ? -1 : answer;
 }
