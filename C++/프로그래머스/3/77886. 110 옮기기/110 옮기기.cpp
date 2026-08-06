@@ -5,37 +5,36 @@ using namespace std;
 
 vector<string> solution(vector<string> s) {
     vector<string> answer;
-    for (const string& cs : s)
+    for (const string& str : s)
     {
         string x;
-        int count = 0;
-        for (char c : cs)
+        int cnt = 0;
+        for (char c : str)
         {
             x.push_back(c);
             while (x.size() >= 3 && x.substr(x.size() - 3) == "110")
             {
-                count++;
-                x.pop_back();x.pop_back();x.pop_back();
+                x.pop_back(); x.pop_back(); x.pop_back();
+                cnt++;
             }
         }
-                
-        int idx = -1;
+        
+        int LastZero = 0;
         for (int i = x.size() - 1; i >= 0; i--)
         {
             if (x[i] == '0')
             {
-                idx = i;
+                LastZero = i + 1;
                 break;
             }
         }
-        idx++;
         
-        string res(x.begin(), x.begin() + idx);
-        for (int i = 0; i < count; i++)
+        string res = x.substr(0, LastZero);
+        for (int i = 0; i < cnt; i++)
         {
             res.append("110");
         }
-        res.append(x.substr(idx));
+        res.append(x.substr(LastZero));
         answer.push_back(res);
     }
     return answer;
