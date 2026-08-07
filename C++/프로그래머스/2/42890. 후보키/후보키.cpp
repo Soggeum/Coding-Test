@@ -2,44 +2,50 @@
 #include <vector>
 #include <unordered_set>
 
+// 유일성, 최소성
+// 비트마스킹, 로우 돌면서 set에 넣기
+// 크기 정확하면 최소성 검사
+// 최소성은 이전 후보키들 & 해서 같으면 불만족
+
 using namespace std;
 
 int solution(vector<vector<string>> relation) {
-    int row = relation.size(), col = relation[0].size();
-    vector<int> answer;
-    for (int bit = 1; bit < (1 << col); bit++)
+    int N = relation.size(), M = relation[0].size();
+    vector<int> Key;
+    for (int i = 1; i < (1 << M); i++)
     {
         unordered_set<string> us;
-        for (int i = 0; i < row; i++)
+        for (int row = 0; row < N; row++)
         {
             string s;
-            for (int j = 0; j < col; j++)
+            for (int j = 0; j < M; j++)
             {
-                if (bit & (1 << (col - 1 - j)))
+                if (i & (1 << j))
                 {
-                    s.append(relation[i][j]);
+                    s.append(relation[row][j]);
                     s.push_back(' ');
                 }
-            }
+            }    
             us.insert(s);
         }
         
-        if (us.size() == row)
+        if (us.size() == N)
         {
-            int i = 0;
-            for (; i < answer.size(); i++)
+            bool bFlag = true;
+            for (int k : Key)
             {
-                if ((answer[i] & bit) == answer[i])
+                if ((k & i) == k)
                 {
+                    bFlag = false;
                     break;
                 }
             }
-            if (i == answer.size())
+            if (bFlag)
             {
-                answer.push_back(bit);
+                Key.push_back(i);
             }
         }
     }
     
-    return answer.size();
+    return Key.size();
 }
