@@ -4,51 +4,54 @@
 using namespace std;
 
 int solution(vector<vector<int>> beginning, vector<vector<int>> target) {
-    int N = beginning.size(), M = beginning[0].size();
-    int answer = 2100000000;
-    for (int i = 0; i < (1 << (N + M)); i++)
+    int N = beginning.size(), M = beginning[0].size(), answer = N + M + 1;
+    for (int i = 0; i < (1 << N); i++)
     {
         vector<vector<int>> Table = beginning;
-        int Count = 0;
-        for (int j = 0; j < N + M; j++)
+        int cnt = 0;
+        for (int j = 0; j < N; j++)
         {
             if (i & (1 << j))
             {
-                Count++;
-                if (j < M)
+                cnt++;
+                for (int col = 0; col < M; col++)
                 {
-                    for (int row = 0; row < N; row++)
-                    {
-                        Table[row][j] = !Table[row][j];
-                    }
+                    Table[j][col] ^= 1;
+                }
+            }
+        }
+        
+        bool bFlag = true;
+        for (int col = 0; col < M; col++)
+        {
+            bool bSame = false, bDiff = false;
+            for (int row = 0; row < N; row++)
+            {
+                if (Table[row][col] ^ target[row][col])
+                {
+                    bDiff = true;
                 }
                 else
                 {
-                    for (int col = 0; col < M; col++)
-                    {
-                        Table[j - M][col] = !Table[j - M][col];
-                    }
+                    bSame = true;
                 }
+            }
+            if (bSame && bDiff)
+            {
+                bFlag = false;
+                break;
+            }
+            else if (bDiff)
+            {
+                cnt++;
             }
         }
         
-        bool flag = true;
-        for (int i = 0; i < N; i++)
+        if (bFlag)
         {
-            for (int j = 0;j < M; j++)
-            {
-                if (Table[i][j] != target[i][j])
-                {
-                    flag = false;
-                }
-            }
-        }
-        if (flag)
-        {
-            answer = min(answer, Count);
+            answer = min(answer, cnt);
         }
     }
-        
-
-    return answer == 2100000000 ? -1 : answer;
+    
+    return answer == N + M + 1 ? -1 : answer;
 }
