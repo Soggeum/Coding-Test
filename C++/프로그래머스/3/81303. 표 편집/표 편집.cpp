@@ -1,91 +1,93 @@
 #include <string>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
+// c할 때 아래 행 선택. 없다면 윗 행 선택
+// z는 복구만 하면 된다. 선택된 행 변화 없어야함
+// 양방향 리스트 벡터
+// 이전/ 다음 없으면 -1로
+// 삭제할 때 앞/뒤 연결(없으면 안 하기). 삭제한거 벡터에 넣기(인덱스만). k선택 잘
+// z하면 벡터에서 빼고 연결(없으면 안 하기)
+// 다 하고, 삭제 백터에 이쓴ㄴ것만 answer수정
+
 struct Node
 {
-    int Prev, Next;
-};
-
-struct SNode
-{
-    int Idx;
-    Node node;
+    int Prev, Next;    
 };
 
 string solution(int n, int k, vector<string> cmd) {
     vector<Node> Table(n);
-    Table[0] = {-1, 1};
-    for (int i = 1; i < n - 1; i++)
+    for (int i = 0; i < n; i++)
     {
         Table[i].Prev = i - 1;
         Table[i].Next = i + 1;
     }
-    Table[n - 1] = {n - 2, -1};
+    Table[0].Prev = -1;
+    Table[n - 1].Next = -1;
     
-    vector<SNode> Stack;
+    vector<int> Del;
     for (const string& c : cmd)
     {
-        if (c[0] == 'U')
+        stringstream ss(c);
+        string com;
+        ss >> com;
+        if (com == "U")
         {
-            int X = stoi(c.substr(2));
-            for (int i = 0; i < X; i++)
+            int X;
+            ss >> X;
+            while (X)
             {
                 k = Table[k].Prev;
+                X--;
             }
         }
-        else if (c[0] == 'D')
+        else if (com == "D")
         {
-            int X = stoi(c.substr(2));
-            for (int i = 0; i < X; i++)
+            int X;
+            ss >> X;
+            while (X)
             {
                 k = Table[k].Next;
+                X--;
             }
         }
-        else if (c[0] == 'C')
+        else if (com == "C")
         {
-            Stack.push_back({k, Table[k]});
-            if (Table[k].Prev != -1)
+            Del.push_back(k);
+            int Prev = Table[k].Prev, Next = Table[k].Next;
+            if (Prev >= 0)
             {
-                Table[Table[k].Prev].Next = Table[k].Next;
+                Table[Prev].Next = Next;
             }
-            if (Table[k].Next != - 1)
+            if (Next != -1)
             {
-                Table[Table[k].Next].Prev = Table[k].Prev;
+                Table[Next].Prev = Prev;                
             }
-            
-            if (Table[k].Next == -1)
-            {
-                k = Table[k].Prev;
-            }
-            else
-            {
-                k = Table[k].Next;
-            }
+            k = (Next == -1 ? Prev : Next);
         }
         else
         {
-            int Idx = Stack.back().Idx;
-            Node node = Stack.back().node;
-            Stack.pop_back();
+            int d = Del.back();
+            Del.pop_back();
             
-            if (node.Prev != -1)
+            int Prev = Table[d].Prev, Next = Table[d].Next;
+            if (Prev != -1)
             {
-                Table[node.Prev].Next = Idx;
+                Table[Prev].Next = d;
             }
-            if (node.Next != -1)
+            if (Next != -1)
             {
-                Table[node.Next].Prev = Idx;
+                Table[Next].Prev = d;
             }
         }
     }
     
     string answer(n, 'O');
-    while (!Stack.empty())
+    for (int x : Del)
     {
-        answer[Stack.back().Idx] = 'X';
-        Stack.pop_back();
+        answer[x] = 'X';
     }
     return answer;
 }
