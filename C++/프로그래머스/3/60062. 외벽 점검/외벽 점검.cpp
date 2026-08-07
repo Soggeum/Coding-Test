@@ -4,55 +4,43 @@
 
 using namespace std;
 
-int _FindAnswer(const vector<int>& Weak, const vector<int>& dist, vector<bool>& Used, int PointIdx)
+int Go(const vector<int>& Target, const vector<int>& dist)
 {
-    if (PointIdx == Weak.size())
+    int Curr = 0, Friend = 0;
+    while (Curr < Target.size() && Friend < dist.size())
     {
-        int res = 0;
-        for (bool b : Used)
+        int Next = Target[Curr] + dist[Friend++];
+        auto it = upper_bound(Target.begin(), Target.end(), Next);
+        Curr = it - Target.begin();
+        if (Curr == Target.size())
         {
-            if (b)
-            {
-                res++;
-            }
+            return Friend;
         }
-        return res;
     }
+    return 10;
     
-    int Res = 999;
-    for (int i = 0; i < dist.size(); i++)
-    {
-        if (!Used[i])
-        {
-            Used[i] = true;
-            int StartPoint = Weak[PointIdx];
-            int EndPoint = StartPoint + dist[i];
-            int NewPointIdx = upper_bound(Weak.begin(), Weak.end(), EndPoint) - Weak.begin();
-            Res = min(Res, _FindAnswer(Weak, dist, Used, NewPointIdx));
-            Used[i] = false;
-        }
-    }
-    return Res;
-}
-
-int FindAnswer(const vector<int>& Weak, const vector<int>& dist)
-{
-    vector<bool> Used(dist.size());
-    int PointIdx = 0;
-    return _FindAnswer(Weak, dist, Used, PointIdx);
 }
 
 int solution(int n, vector<int> weak, vector<int> dist) {
-    int answer = 999;
-    for (int i = 0; i < weak.size(); i++)
+    sort(dist.begin(), dist.end());
+    int answer = 10;
+    do
     {
-        vector<int> NewWeak(weak.begin() + i, weak.end());
-        for (int j = 0; j < i; j++)
+        for (int Start = 0; Start < weak.size(); Start++)
         {
-            NewWeak.push_back(n + weak[j]);
+            vector<int> Target(weak.begin() + Start, weak.end());
+            for (int i = 0; i < Start; i++)
+            {
+                Target.push_back(n + weak[i]);
+            }
+            
+            int Res = Go(Target, dist);
+            if (Res != 10)
+            {
+                answer = min(answer, Res);
+            }
         }
-        answer = min(answer, FindAnswer(NewWeak, dist));
-    }
+    } while (next_permutation(dist.begin(), dist.end()));
     
-    return answer == 999 ? -1 : answer;
+    return answer == 10 ? -1 : answer;
 }
