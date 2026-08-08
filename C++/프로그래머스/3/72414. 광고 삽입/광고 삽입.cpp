@@ -3,22 +3,22 @@
 
 using namespace std;
 
-int GetTime(const string& Time)
+int GetSec(const string& Time)
 {
-    int res = 0;
-    string Hour = Time.substr(0, 2), Min = Time.substr(3, 2), Sec = Time.substr(6);
-    return res += stoi(Hour) * 60 *60 + stoi(Min) * 60 + stoi(Sec);
+    string H = Time.substr(0, 2);
+    string M = Time.substr(3, 2);
+    string S = Time.substr(6, 2);
+    return stoi(H) * 3600 + stoi(M) * 60 + stoi(S);
 }
 
-string ToStr(int Time)
+string GetTime(int Time)
 {
-    string res;
     int S = Time % 60;
     Time /= 60;
     int M = Time % 60;
     Time /= 60;
     int H = Time;
-    
+    string res;
     if (H < 10)
     {
         res.push_back('0');
@@ -41,40 +41,45 @@ string ToStr(int Time)
 }
 
 string solution(string play_time, string adv_time, vector<string> logs) {
-    int PlayTime = GetTime(play_time);
-    vector<int> Table(PlayTime + 1);
-    for (const string& log : logs)
+    int N = GetSec(play_time);
+    vector<int> Table(N);
+    for (const string& l : logs)
     {
-        int StartTime = GetTime(log.substr(0, 8)), EndTime = GetTime(log.substr(9, 8));
-        Table[StartTime] += 1;
-        Table[EndTime] -= 1;
+        int Start = GetSec(l.substr(0, 8));
+        int End = GetSec(l.substr(9));
+        Table[Start] += 1;
+        if (End < N)
+        {
+            Table[End] -= 1;
+        }
     }
-    for (int i = 1; i < Table.size(); i++)
+    for (int i = 1;i < N; i++)
     {
         Table[i] += Table[i - 1];
     }
     
-    int Start = 0, End = GetTime(adv_time);
-    long long count = 0, Max = 0;
-    string answer;
+    long long Cnt = 0;
+    int Start = 0, End = GetSec(adv_time);
     for (int i = Start; i < End; i++)
     {
-        count += Table[i];
+        Cnt += Table[i];
     }
-    while (End <= PlayTime)
+    long long Max = Cnt;
+    int answer = 0;
+    while (End <= N)
     {
-        if (count > Max)
-        {
-            answer = ToStr(Start);
-            Max = count;
-        }
-        count -= Table[Start++];
-        if (End == PlayTime)
+        Cnt -= Table[Start++];
+        if (End == N)
         {
             break;
         }
-        count += Table[End++];
+        Cnt += Table[End++];
+        if (Cnt > Max)
+        {
+            Max = Cnt;
+            answer = Start;
+        }
     }
-       
-    return answer;
+    
+    return GetTime(answer);
 }
