@@ -4,12 +4,7 @@
 using namespace std;
 
 int solution(int n, vector<int> cores) {
-    if (n <= cores.size())
-    {
-        return n;
-    }
-    
-    long long Start = 1, End = n * 10000, Time = End;
+    long long Start = 1, End = n * 10000ll, answer = End;
     while (Start <= End)
     {
         long long Mid = (Start + End) / 2;
@@ -21,30 +16,29 @@ int solution(int n, vector<int> cores) {
         
         if (Count >= n)
         {
-            Time = Mid;
+            answer = Mid;
             End = Mid - 1;
         }
         else
         {
-            Start = Mid + 1;
+            Start  = Mid + 1;
         }
     }
     
-    int Cnt = 0;
+    for (int c : cores)
+    {
+        n -= (answer - 1) / c + 1;        
+    } 
     for (int i = 0; i < cores.size(); i++)
     {
-        Cnt += (Time - 1) / cores[i] + 1;
-    }
-    for (int i = 0; i < cores.size(); i++)
-    {
-        if (Time % cores[i] == 0)
+        if (answer % cores[i] == 0)
         {
-            Cnt++;
+            n--;
         }
-        if (Cnt == n)
+        if (n == 0)
         {
             return i + 1;
         }
-    }
+    } 
     return cores.size();
 }
