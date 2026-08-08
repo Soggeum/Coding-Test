@@ -6,41 +6,35 @@
 
 using namespace std;
 
-void Put(unordered_map<string, vector<int>>& Table, const vector<string>& A, int X)
+void Push(unordered_map<string, vector<int>>& Table, const vector<string>& vs, int X)
 {
     for (int i = 0; i < (1 << 4); i++)
     {
         string key;
-        for (int j = 0; j < 4; j++)
+        for (int j = 0;j < 4; j++)
         {
             if (i & (1 << j))
             {
-                key.append(A[j]);
+                key.append(vs[j]);
             }
             else
             {
                 key.push_back('-');
             }
-            if (j < 3)
-            {
-                key.append(" and ");
-            }
+            key.push_back(' ');
         }
-        
         Table[key].push_back(X);
     }
 }
 
 vector<int> solution(vector<string> info, vector<string> query) {
     unordered_map<string, vector<int>> Table;
-    for (const string& i : info)
-    {
-        vector<string> A(4);
+    for (const string& i : info){
+        vector<string> vs(4);
         int X;
         stringstream ss(i);
-        ss >> A[0] >> A[1] >> A[2] >> A[3] >> X;
-        
-        Put(Table, A, X);
+        ss >> vs[0] >> vs[1] >> vs[2] >> vs[3] >> X;
+        Push(Table, vs, X);
     }
     
     for (auto& it : Table)
@@ -51,20 +45,25 @@ vector<int> solution(vector<string> info, vector<string> query) {
     vector<int> answer;
     for (const string& q : query)
     {
-        string key;
+        string a, b, c, d, e, f, g;
         int X;
-        for (int i = 0; i < q.size(); i++)
-        {
-            if (isdigit(q[i]))
-            {
-                key = q.substr(0, i - 1);
-                X = stoi(q.substr(i));
-                break;
-            }
-        }
+        stringstream ss(q);
+        ss >> a >> b >> c>> d>>e>>f>>g>>X;
+        string key = a;
+        key.push_back(' ');
+        key.append(c);
+        key.push_back(' ');
+        key.append(e);
+        key.push_back(' ');
+        key.append(g);
+        key.push_back(' ');
         
-        auto it = lower_bound(Table[key].begin(), Table[key].end(), X);
-        answer.push_back(Table[key].end() - it);
+        const auto& it = Table.find(key);
+        if (it != Table.end())
+        answer.push_back(it->second.end() - lower_bound(it->second.begin(), it->second.end(), X));
+        else
+            answer.push_back(0);
     }
+    
     return answer;
 }
