@@ -5,6 +5,11 @@
 
 using namespace std;
 
+// Edge엔 도착지와 가중치
+// Node엔 도착지와 intensity
+// pq엔 첨에 gate만 넣고, 다익스트라 실행
+// visit은 intensity로 처리
+
 struct Edge
 {
     int Dest, Weight;    
@@ -13,6 +18,7 @@ struct Edge
 struct Node
 {
     int Curr, Intensity;    
+    
     bool operator<(const Node& Other) const
     {
         return Intensity > Other.Intensity;
@@ -21,54 +27,59 @@ struct Node
 
 vector<int> solution(int n, vector<vector<int>> paths, vector<int> gates, vector<int> summits) {
     vector<vector<Edge>> Graphs(n + 1);
-    for (const vector<int>& p : paths)
+    for (const vector<int>& path : paths)
     {
-        Graphs[p[0]].push_back({p[1], p[2]});
-        Graphs[p[1]].push_back({p[0], p[2]});
-    }
-    
-    unordered_set<int> s;
-    for (int summit : summits)
-    {
-        s.insert(summit);
+        Graphs[path[0]].push_back({path[1], path[2]});
+        Graphs[path[1]].push_back({path[0], path[2]});
     }
     
     priority_queue<Node> pq;
-    vector<bool> Visited(n + 1);
+    vector<int> Dist(n + 1, 10000001);
     for (int g : gates)
     {
         pq.push({g, 0});
     }
-    vector<int> answer = {50001, 10000001};
+    
+    unordered_set<int> us;
+    for (int s : summits)
+    {
+        us.insert(s);
+    }
+    
+    vector<int> answer = {n, 10000001};
     while (!pq.empty())
     {
         int Curr = pq.top().Curr, Intensity = pq.top().Intensity;
         pq.pop();
         
-        if (Visited[Curr])
+        if (Dist[Curr] <= Intensity)
         {
             continue;
         }
-        Visited[Curr] = true;
+        Dist[Curr] = Intensity;
         
-        if (s.find(Curr) != s.end())
+        auto it = us.find(Curr);
+        if (it != us.end())
         {
-            if (Intensity == answer[1])
-            {
-                answer[0] = min(answer[0], Curr);
-            }
-            else if (Intensity < answer[1])
+            if (answer[1] > Intensity)
             {
                 answer = {Curr, Intensity};
+                continue;
+            }
+            else if (answer[1] == Intensity)
+            {
+                answer[0] = min(Curr, answer[0]);
+                continue;
             }
             continue;
         }
         
         for (const Edge& e : Graphs[Curr])
         {
-            if (!Visited[e.Dest])
+            int Dest = e.Dest, NewI = max(Intensity, e.Weight);
+            if (Dist[Dest] > NewI)
             {
-                pq.push({e.Dest, max(Intensity, e.Weight)});
+                pq.push({Dest, NewI});
             }
         }
     }
