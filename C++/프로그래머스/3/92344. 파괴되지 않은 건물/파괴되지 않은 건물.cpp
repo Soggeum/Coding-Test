@@ -4,7 +4,8 @@
 using namespace std;
 
 int solution(vector<vector<int>> board, vector<vector<int>> skill) {
-    vector<vector<int>> Table(board.size() + 1, vector<int>(board[0].size() + 1));
+    int N = board.size(), M = board[0].size();
+    vector<vector<int>> Table(N + 1, vector<int>(M + 1));
     for (const vector<int>& s : skill)
     {
         int type = s[0], r1 = s[1], c1 = s[2], r2 = s[3], c2 = s[4], degree = s[5];
@@ -16,28 +17,28 @@ int solution(vector<vector<int>> board, vector<vector<int>> skill) {
         Table[r1][c1] += degree;
         Table[r1][c2 + 1] -= degree;
         Table[r2 + 1][c1] -= degree;
-        Table[r2 + 1][c2 + 1] += degree;        
+        Table[r2 + 1][c2 + 1] += degree;
     }
     
-    for (int i = 1; i < board.size(); i++)
+    for (int i = 0;i < N; i++)
     {
-        for (int j = 0; j < board[i].size(); j++)
-        {
-            Table[i][j] += Table[i - 1][j];
-        }
-    }
-    for (int i = 0; i < board.size(); i++)
-    {
-        for (int j = 1; j < board[i].size(); j++)
+        for (int j = 1;j < M; j++)
         {
             Table[i][j] += Table[i][j - 1];
         }
     }
+    for (int j = 0;j < M; j++)
+    {
+        for (int i = 1;i < N; i++)
+        {
+            Table[i][j] += Table[i - 1][j];
+        }
+    }
     
     int answer = 0;
-    for (int i = 0; i < board.size(); i++)
+    for (int i = 0;i < N; i++)
     {
-        for (int j = 0; j < board[i].size(); j++)
+        for (int j = 0;j < M; j++)
         {
             if (board[i][j] + Table[i][j] > 0)
             {
