@@ -10,22 +10,22 @@ int solution(vector<int> a) {
         return a.size();
     }
     
-    int answer = 2;
     set<int> Right;
-    for (int i = 1; i < a.size(); i++)
+    for (int i = 2; i < a.size(); i++)
     {
         Right.insert(a[i]);
     }
-    int MinLeft = a[0];
+    
+    int answer = 2, Left = a[0];
     for (int i = 1; i < a.size() - 1; i++)
     {
-        if (!(MinLeft < a[i] && *Right.begin() < a[i]))
+        if (!(Left < a[i] && a[i] > *Right.begin()))
         {
             answer++;
         }
-        MinLeft = min(MinLeft, a[i]);
+        Left = min(Left, a[i]);
         Right.erase(a[i]);
+        
     }
-    
     return answer;
 }
