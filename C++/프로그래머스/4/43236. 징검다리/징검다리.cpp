@@ -6,30 +6,31 @@ using namespace std;
 
 int solution(int distance, vector<int> rocks, int n) {
     sort(rocks.begin(), rocks.end());
-    int Start = 1, End = distance, answer = 0;
+    
+    int Start = 1, End = distance, answer = 1;
     while (Start <= End)
     {
         int Mid = (Start + End) / 2;
-        int Last = 0, count = 0;
+        int Del = 0, LastRock = 0;
         for (int r : rocks)
         {
-            if (r - Last >= Mid)
+            if (r - LastRock >= Mid)
             {
-                Last = r;
+                LastRock = r;
             }
             else
             {
-                count++;
+                Del++;
             }
         }
-        if (distance - Last < Mid)
+        if (distance - LastRock < Mid)
         {
-            count++;
+            Del++;
         }
         
-        if (count <= n)
+        if (Del <= n)
         {
-            answer = max(answer, Mid);
+            answer = Mid;
             Start = Mid + 1;
         }
         else
