@@ -14,24 +14,32 @@ bool comp(const vector<int>& a, const vector<int>& b)
 }
 
 int solution(vector<vector<int>> scores) {
-    vector<int> wanho = scores[0];
+    vector<int> wanho = scores[0];    
     sort(scores.begin(), scores.end(), comp);
-    int MaxPeer = -1, answer = 1;
+    
+    int Max = 0, answer = 1, Sum = wanho[1] + wanho[0];
     for (const vector<int>& s : scores)
-    {
+    {        
         if (s == wanho)
         {
-            if (s[1] < MaxPeer)
+            if (s[1] < Max)
             {
                 return -1;
             }
-        }
-        if (s[1] >= MaxPeer)
-        {
-            MaxPeer = s[1];
-            if (s[0] + s[1] > wanho[0] + wanho[1])
+            else
             {
-                answer++;
+                Max = s[1];
+            }
+        }
+        else
+        {
+            if (s[1] >= Max)
+            {
+                Max = s[1];
+                if (s[0] + s[1] > Sum)
+                {
+                    answer++;
+                }
             }
         }
     }
