@@ -1,51 +1,46 @@
 #include <string>
 #include <vector>
-#include <unordered_set>
-
-// 유일성, 최소성
-// 비트마스킹, 로우 돌면서 set에 넣기
-// 크기 정확하면 최소성 검사
-// 최소성은 이전 후보키들 & 해서 같으면 불만족
+#include <set>
 
 using namespace std;
 
 int solution(vector<vector<string>> relation) {
-    int N = relation.size(), M = relation[0].size();
-    vector<int> Key;
-    for (int i = 1; i < (1 << M); i++)
+    int Row = relation.size(), Column = relation[0].size();
+    
+    vector<int> Keys;
+    for (int i = 1; i < (1 << Column); i++)
     {
-        unordered_set<string> us;
-        for (int row = 0; row < N; row++)
+        set<string> s;
+        for (int row = 0; row < Row; row++)
         {
-            string s;
-            for (int j = 0; j < M; j++)
+            string Temp;
+            for (int col = 0; col < Column; col++)
             {
-                if (i & (1 << j))
+                if (i & (1 << col))
                 {
-                    s.append(relation[row][j]);
-                    s.push_back(' ');
+                    Temp.append(relation[row][col]);
+                    Temp.push_back(' ');
                 }
-            }    
-            us.insert(s);
+            }
+            s.insert(Temp);
         }
         
-        if (us.size() == N)
+        if (s.size() == Row)
         {
-            bool bFlag = true;
-            for (int k : Key)
+            int x = 0;
+            for (; x < Keys.size(); x++)
             {
-                if ((k & i) == k)
+                if ((Keys[x] & i) == Keys[x])
                 {
-                    bFlag = false;
                     break;
                 }
             }
-            if (bFlag)
+            if (x == Keys.size())
             {
-                Key.push_back(i);
+                Keys.push_back(i);
             }
         }
     }
     
-    return Key.size();
+    return Keys.size();
 }
