@@ -1,47 +1,48 @@
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 using namespace std;
 
-void DFS(int Curr, vector<bool>& CanGo, const vector<vector<int>>& Graphs, const vector<int>& info, int& MaxSheep, int Sheep, int Wolf)
+void DFS(int& answer, int Curr, int Sheep, int Wolf, const vector<int>& info, const vector<vector<int>>& Trees, unordered_set<int> Next)
 {
-    info[Curr] ? Wolf++ : Sheep++;
+    Next.erase(Curr);
+    
+    if(info[Curr])
+    {
+        Wolf++;
+    }
+    else
+    {
+        Sheep++;
+    }
     if (Wolf >= Sheep)
     {
         return;
     }
-    MaxSheep = max(MaxSheep, Sheep);
     
-    for (int Dest : Graphs[Curr])
+    answer = max(answer, Sheep);
+    
+    for (int n : Trees[Curr])
     {
-        CanGo[Dest] = true;
+        Next.insert(n);
     }
     
-    for (int i = 0; i < CanGo.size(); i++)
+    for (int n : Next)
     {
-        if (CanGo[i])
-        {
-            CanGo[i] = false;
-            DFS(i, CanGo, Graphs, info, MaxSheep, Sheep, Wolf);
-            CanGo[i] = true;
-        }
-    }
-    
-    for (int Dest : Graphs[Curr])
-    {
-        CanGo[Dest] = false;
+        DFS(answer, n, Sheep, Wolf, info, Trees, Next);
     }
 }
 
 int solution(vector<int> info, vector<vector<int>> edges) {
-    vector<bool> CanGo(info.size());
-    vector<vector<int>> Graphs(info.size());
+    int n = info.size();
+    vector<vector<int>> Trees(n);
     for (const vector<int>& e : edges)
     {
-        Graphs[e[0]].push_back(e[1]);
+        Trees[e[0]].push_back(e[1]);
     }
     
-    int MaxSheep = 0;
-    DFS(0, CanGo, Graphs, info, MaxSheep, 0, 0);
-    return MaxSheep;
+    int answer = 0;
+    DFS(answer, 0, 0, 0, info, Trees, {});
+    return answer;
 }
