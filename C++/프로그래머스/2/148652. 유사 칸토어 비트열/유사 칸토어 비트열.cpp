@@ -4,28 +4,39 @@
 
 using namespace std;
 
-long long GetOne(int n, long long i)
+long long Get(int n, long long x)
 {
-    if (i < 0)
+    if (x == -1)
     {
         return 0;
     }
     if (n == 1)
     {
-        return i < 2 ? i + 1 : i;
+        if (x < 2)
+        {
+            return x + 1;
+        }
+        return x;
     }
     
-    long long res = 0;
-    int Idx = i / static_cast<long long>(pow(5, n - 1));
-    res += (Idx < 3 ? pow(4, n - 1) * Idx : pow(4, n - 1) * (Idx - 1)); 
+    long long res= 0;
+    int Ith = x / static_cast<long long>(pow(5, n - 1));
+    if (Ith < 3)
+    {
+        res += Ith * static_cast<long long>(pow(4, n - 1));
+    }
+    else
+    {
+        res += (Ith - 1) * static_cast<long long>(pow(4, n - 1));
+    }
     
-    if (Idx == 2)
+    if (Ith == 2)
     {
         return res;
     }
-    return res + GetOne(n - 1, i % static_cast<long long>(pow(5, n - 1)));
+    return res + Get(n - 1, x % static_cast<long long>(pow(5, n - 1)));
 }
 
 int solution(int n, long long l, long long r) {
-    return GetOne(n, r - 1) - GetOne(n, l - 2);
+    return Get(n, r - 1) - Get(n, l - 2);
 }
