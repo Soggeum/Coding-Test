@@ -5,81 +5,82 @@ using namespace std;
 
 int GetSec(const string& Time)
 {
-    string H = Time.substr(0, 2);
-    string M = Time.substr(3, 2);
-    string S = Time.substr(6, 2);
-    return stoi(H) * 3600 + stoi(M) * 60 + stoi(S);
+    int Res = 0;
+    Res += stoi(Time.substr(0, 2)) * 60 * 60;
+    Res += stoi(Time.substr(3, 2)) * 60;
+    Res += stoi(Time.substr(6, 2));
+    return Res;
 }
 
 string GetTime(int Time)
 {
-    int S = Time % 60;
-    Time /= 60;
-    int M = Time % 60;
-    Time /= 60;
-    int H = Time;
-    string res;
-    if (H < 10)
-    {
-        res.push_back('0');
-    }
-    res.append(to_string(H));
-    res.push_back(':');
-    if (M < 10)
-    {
-        res.push_back('0');
-    }
-    res.append(to_string(M));
-    res.push_back(':');
-    if (S < 10)
-    {
-        res.push_back('0');
-    }
-    res.append(to_string(S));
+    int Hour = Time / 3600;
+    Time %= 3600;
+    int Min = Time / 60;
+    Time %= 60;
     
-    return res;
+    string Res;
+    if (Hour < 10)
+    {
+        Res.push_back('0');
+    }
+    Res.append(to_string(Hour));
+    Res.push_back(':');
+    if (Min < 10)
+    {
+        Res.push_back('0');
+    }
+    Res.append(to_string(Min));
+    Res.push_back(':');
+    if (Time < 10)
+    {
+        Res.push_back('0');
+    }
+    Res.append(to_string(Time));
+    return Res;
 }
 
 string solution(string play_time, string adv_time, vector<string> logs) {
-    int N = GetSec(play_time);
-    vector<int> Table(N);
+    int TotalSec = GetSec(play_time);
+    vector<int> Table(TotalSec);
+    
     for (const string& l : logs)
     {
-        int Start = GetSec(l.substr(0, 8));
-        int End = GetSec(l.substr(9));
-        Table[Start] += 1;
-        if (End < N)
+        int Start = GetSec(l.substr(0, 8)), End = GetSec(l.substr(9));
+        Table[Start]++;
+        if (End < TotalSec)
         {
-            Table[End] -= 1;
+            Table[End]--;
         }
     }
-    for (int i = 1;i < N; i++)
+    for (int i = 1; i < TotalSec; i++)
     {
         Table[i] += Table[i - 1];
     }
     
-    long long Cnt = 0;
-    int Start = 0, End = GetSec(adv_time);
-    for (int i = Start; i < End; i++)
+    int Left = 0, Right = GetSec(adv_time);
+    long long Count = 0;
+    for (int i = Left; i < Right; i++)
     {
-        Cnt += Table[i];
+        Count += Table[i];
     }
-    long long Max = Cnt;
-    int answer = 0;
-    while (End <= N)
+    long long MaxCount = Count;
+    string Answer = "00:00:00";
+    while (Right <= TotalSec)
     {
-        Cnt -= Table[Start++];
-        if (End == N)
+        Count -= Table[Left++];
+        if (Right == TotalSec)
         {
             break;
         }
-        Cnt += Table[End++];
-        if (Cnt > Max)
+        Count += Table[Right++];
+        
+        if (Count > MaxCount)
         {
-            Max = Cnt;
-            answer = Start;
+            MaxCount = Count;
+            Answer = GetTime(Left);
         }
     }
     
-    return GetTime(answer);
+    return Answer;
 }
