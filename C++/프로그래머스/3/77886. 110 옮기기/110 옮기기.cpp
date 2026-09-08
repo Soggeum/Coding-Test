@@ -3,39 +3,41 @@
 
 using namespace std;
 
-vector<string> solution(vector<string> s) {
+vector<string> solution(vector<string> s) {    
     vector<string> answer;
-    for (const string& str : s)
+    for (const string& s1 : s)
     {
-        string x;
-        int cnt = 0;
-        for (char c : str)
+        int Cnt = 0;
+        string temp = s1.substr(0, 2);
+        for (int i = 2; i < s1.size(); i++)
         {
-            x.push_back(c);
-            while (x.size() >= 3 && x.substr(x.size() - 3) == "110")
+            temp.push_back(s1[i]);
+            int n = temp.size();
+            if (temp[n - 3] == '1' && temp[n - 2] == '1' && temp[n - 1] == '0')
             {
-                x.pop_back(); x.pop_back(); x.pop_back();
-                cnt++;
+                Cnt++;
+                temp.pop_back(); temp.pop_back(); temp.pop_back();
             }
         }
         
-        int LastZero = 0;
-        for (int i = x.size() - 1; i >= 0; i--)
+        int LastZero = -1;
+        for (int i = temp.size() - 1; i >= 0;i--)
         {
-            if (x[i] == '0')
+            if (temp[i] == '0')
             {
-                LastZero = i + 1;
+                LastZero = i;
                 break;
             }
         }
         
-        string res = x.substr(0, LastZero);
-        for (int i = 0; i < cnt; i++)
+        string res = temp.substr(0, LastZero + 1);
+        for (int i = 0; i < Cnt; i++)
         {
             res.append("110");
         }
-        res.append(x.substr(LastZero));
+        res.append(temp.substr(LastZero + 1));
         answer.push_back(res);
     }
+    
     return answer;
 }
