@@ -6,38 +6,39 @@
 
 using namespace std;
 
-void Push(unordered_map<string, vector<int>>& Table, const vector<string>& vs, int X)
+void Push(unordered_map<string, vector<int>>& um, const string& s)
 {
+    vector<string> Type(4);
+    int X;
+    stringstream ss(s);
+    
+    ss >> Type[0] >> Type[1] >> Type[2] >> Type[3] >> X;
     for (int i = 0; i < (1 << 4); i++)
     {
-        string key;
-        for (int j = 0;j < 4; j++)
+        string Temp;
+        for (int j = 0; j < 4; j++)
         {
             if (i & (1 << j))
             {
-                key.append(vs[j]);
+                Temp.append(Type[j]);
             }
             else
             {
-                key.push_back('-');
+                Temp.push_back('-');
             }
-            key.push_back(' ');
         }
-        Table[key].push_back(X);
+        um[Temp].push_back(X);
     }
 }
 
 vector<int> solution(vector<string> info, vector<string> query) {
-    unordered_map<string, vector<int>> Table;
-    for (const string& i : info){
-        vector<string> vs(4);
-        int X;
-        stringstream ss(i);
-        ss >> vs[0] >> vs[1] >> vs[2] >> vs[3] >> X;
-        Push(Table, vs, X);
+    unordered_map<string, vector<int>> um;
+    for (const string& i : info)
+    {
+        Push(um, i);
     }
     
-    for (auto& it : Table)
+    for (auto& it : um)
     {
         sort(it.second.begin(), it.second.end());
     }
@@ -45,24 +46,14 @@ vector<int> solution(vector<string> info, vector<string> query) {
     vector<int> answer;
     for (const string& q : query)
     {
+        stringstream ss(q);
         string a, b, c, d, e, f, g;
         int X;
-        stringstream ss(q);
-        ss >> a >> b >> c>> d>>e>>f>>g>>X;
-        string key = a;
-        key.push_back(' ');
-        key.append(c);
-        key.push_back(' ');
-        key.append(e);
-        key.push_back(' ');
-        key.append(g);
-        key.push_back(' ');
-        
-        const auto& it = Table.find(key);
-        if (it != Table.end())
-        answer.push_back(it->second.end() - lower_bound(it->second.begin(), it->second.end(), X));
-        else
-            answer.push_back(0);
+        ss >> a >> b >> c >> d >>e >>f>> g>> X;
+        string Temp;
+        Temp.append(a).append(c).append(e).append(g);
+        auto it = lower_bound(um[Temp].begin(), um[Temp].end(), X);
+        answer.push_back(um[Temp].end() - it);
     }
     
     return answer;
