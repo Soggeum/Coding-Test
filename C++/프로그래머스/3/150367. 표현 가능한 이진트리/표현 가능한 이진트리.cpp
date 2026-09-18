@@ -8,34 +8,43 @@ string GetBin(long long n)
     string res;
     while (n)
     {
-        res.push_back((n & 1) + '0');
-        n >>= 1;
-    }
-    return string(res.rbegin(), res.rend());
-}
-
-bool IsTree(const string& s, int left, int root, int right)
-{
-    if (left == root && right == root)
-    {
-        return true;
-    }
-    if (s[root] == '1')
-    {
-        if (IsTree(s, left, (left + root - 1) / 2, root - 1) && IsTree(s, root + 1, (root + 1 + right) / 2, right))
+        if (n & 1)
         {
-            return true;
+            res.push_back('1');
         }
         else
         {
-            return false;
+            res.push_back('0');
         }
+        n >>= 1;
+    }
+    
+    int cnt = 1;
+    while (cnt < res.size())
+    {
+        cnt = cnt * 2 + 1;
+    }
+    string CBT(cnt - res.size(), '0');
+    CBT.append(string(res.rbegin(), res.rend()));
+    return CBT;
+}
+
+bool IsCBT(const string& ns, int Root, int Left, int Right)
+{
+    if (Root == Left)
+    {
+        return true;
+    }
+    
+    if (ns[Root] == '1')
+    {
+        return IsCBT(ns, (Left + Root - 1) / 2, Left, Root - 1) && IsCBT(ns, (Root + 1 + Right) / 2, Root + 1, Right);
     }
     else
     {
-        for (int i = left; i <= right; i++)
+        for (int i = Left; i <= Right; i++)
         {
-            if (s[i] == '1')
+            if (ns[i] == '1')
             {
                 return false;
             }
@@ -46,18 +55,10 @@ bool IsTree(const string& s, int left, int root, int right)
 
 vector<int> solution(vector<long long> numbers) {
     vector<int> answer;
-    for (long long number : numbers)
+    for (long long n : numbers)
     {
-        string Bin = GetBin(number);
-        int i = 1;
-        while (i < Bin.size())
-        {
-            i = 2 * i + 1;
-        }
-        string s(i - Bin.size(), '0');
-        s.append(Bin);
-        
-        if (IsTree(s, 0, i / 2, i - 1))
+        string ns = GetBin(n);
+        if (IsCBT(ns, (ns.size() - 1) / 2, 0, ns.size() - 1))
         {
             answer.push_back(1);
         }
