@@ -4,40 +4,34 @@
 
 using namespace std;
 
-int Go(const vector<int>& Target, const vector<int>& dist)
-{
-    int Curr = 0, Friend = 0;
-    while (Curr < Target.size() && Friend < dist.size())
-    {
-        int Next = Target[Curr] + dist[Friend++];
-        auto it = upper_bound(Target.begin(), Target.end(), Next);
-        Curr = it - Target.begin();
-        if (Curr == Target.size())
-        {
-            return Friend;
-        }
-    }
-    return 10;
-    
-}
-
 int solution(int n, vector<int> weak, vector<int> dist) {
     sort(dist.begin(), dist.end());
-    int answer = 10;
+    sort(weak.begin(), weak.end());
+    int answer = 10, m = weak.size();
+    for (int i = 0; i < m; i++)
+    {
+        weak.push_back(weak[i] + n);
+    }
+    
     do
     {
-        for (int Start = 0; Start < weak.size(); Start++)
+        for (int Start = 0; Start < m; Start++)
         {
-            vector<int> Target(weak.begin() + Start, weak.end());
-            for (int i = 0; i < Start; i++)
+            int Curr = Start, End = Start + m, cnt = 0;
+            for (int d : dist)
             {
-                Target.push_back(n + weak[i]);
-            }
-            
-            int Res = Go(Target, dist);
-            if (Res != 10)
-            {
-                answer = min(answer, Res);
+                cnt++;
+                int Dest = weak[Curr] + d;
+                while (Curr < End && weak[Curr] <= Dest)
+                {
+                    Curr++;
+                }
+                
+                if (Curr >= End)
+                {
+                    answer = min(answer, cnt);
+                    break;
+                }
             }
         }
     } while (next_permutation(dist.begin(), dist.end()));
