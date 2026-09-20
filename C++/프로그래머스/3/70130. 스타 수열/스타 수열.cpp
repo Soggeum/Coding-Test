@@ -1,35 +1,39 @@
 #include <string>
 #include <vector>
 
-// Last에 각 숫자가 스타수열에 들어갔을 때 가장 마지막으로 사용된 수의 인덱스 넣기
-// 이전 숫자가 되면 넣기, 안 되면 다음 숫자.
-
 using namespace std;
 
+struct Node
+{
+    int Last, Cnt;    
+};
+
 int solution(std::vector<int> a) {
-    vector<int> Last(a.size(), -1);
-    vector<int> Count(a.size());
+    vector<Node> Table(a.size(), {-1, 0}); 
     for (int i = 0; i < a.size(); i++)
     {
-        if (Last[a[i]] != i - 1 && a[i - 1] != a[i])
+        int x = a[i];
+        if (Table[x].Last != i - 1)
         {
-            Last[a[i]] = i;
-            Count[a[i]] += 2;
+            Table[x].Last = i;
+            Table[x].Cnt += 2;
         }
-        else if (i + 1 < a.size() && a[i + 1] != a[i])
+        else if (i + 1 < a.size() && x != a[i + 1])
         {
-            Last[a[i]] = i + 1;
-            Count[a[i]] += 2;
+            Table[x].Last  = i + 1;
+            Table[x].Cnt += 2;
         }
         else
         {
-            Last[a[i]] = i;
+            Table[x].Last = i;
         }
     }
+    
+    
     int answer = 0;
-    for (int n : Count)
+    for (int i = 0; i < Table.size(); i++)
     {
-        answer = max(answer, n);
+        answer = max(answer, Table[i].Cnt);
     }
-    return answer == 2 ? 0  : answer;
+    return answer;
 }
