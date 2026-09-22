@@ -4,14 +4,14 @@
 using namespace std;
 
 int solution(vector<vector<int>> info, int n, int m) {
-    vector<vector<int>> Table(info.size(), vector<int>(m, n));
+    vector<vector<int>> DP(info.size(), vector<int>(m, 123456789));
     if (info[0][0] < n)
-    {
-        Table[0][0] = info[0][0];        
+    {    
+        DP[0][0] = info[0][0];
     }
     if (info[0][1] < m)
     {
-        Table[0][info[0][1]] = 0;
+        DP[0][info[0][1]] = 0;
     }
     
     for (int i = 1; i < info.size(); i++)
@@ -19,19 +19,23 @@ int solution(vector<vector<int>> info, int n, int m) {
         int A = info[i][0], B = info[i][1];
         for (int j = 0; j < m; j++)
         {
-            int opt1 = j - B >= 0 ? Table[i - 1][j - B] : n;
-            int opt2 = min(Table[i - 1][j] + A, n);
-            Table[i][j] = min(opt1, opt2);
+            int NewA = DP[i - 1][j] + A;
+            if (NewA < n)
+            {
+                DP[i][j] = min(DP[i][j], NewA);
+            }
+            if (j - B >= 0)
+            {
+                DP[i][j] = min(DP[i][j], DP[i - 1][j - B]);
+            }
         }
     }
     
-    int answer = n;
-    for (int x : Table.back())
+    int answer = 123456789;
+    for (int i = 0; i < m; i++)
     {
-        if (x != n)
-        {
-            answer = min(answer, x);
-        }
+        answer = min(answer, DP[info.size() - 1][i]);
     }
-    return answer == n ? -1 : answer;
+    
+    return answer == 123456789 ? -1 : answer;
 }
