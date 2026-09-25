@@ -4,54 +4,64 @@
 using namespace std;
 
 int solution(vector<vector<int>> beginning, vector<vector<int>> target) {
-    int N = beginning.size(), M = beginning[0].size(), answer = N + M + 1;
-    for (int i = 0; i < (1 << N); i++)
+    int N = beginning.size(), M = beginning[0].size(), answer = 30;
+    for (int i = 0; i < (1 << (N + M)); i++)
     {
+        int Cnt = 0, Temp = i;
+        while (Temp)
+        {
+            Cnt++;
+            Temp = Temp & (Temp - 1);
+        }
+        if (Cnt >= answer)
+        {
+            continue;
+        }
+        
         vector<vector<int>> Table = beginning;
-        int cnt = 0;
         for (int j = 0; j < N; j++)
         {
             if (i & (1 << j))
             {
-                cnt++;
                 for (int col = 0; col < M; col++)
                 {
                     Table[j][col] ^= 1;
                 }
             }
         }
+        for (int j = N; j < N + M; j++)
+        {
+            if (i & (1 << j))
+            {
+                for (int row = 0; row < N; row++)
+                {
+                    Table[row][j - N] ^= 1;
+                }
+            }
+        }
         
         bool bFlag = true;
-        for (int col = 0; col < M; col++)
+        for (int i = 0; i < N; i++)
         {
-            bool bSame = false, bDiff = false;
-            for (int row = 0; row < N; row++)
+            if (!bFlag)
             {
-                if (Table[row][col] ^ target[row][col])
-                {
-                    bDiff = true;
-                }
-                else
-                {
-                    bSame = true;
-                }
-            }
-            if (bSame && bDiff)
-            {
-                bFlag = false;
                 break;
             }
-            else if (bDiff)
+            for (int j = 0; j < M; j++)
             {
-                cnt++;
+                if (Table[i][j] != target[i][j])
+                {
+                    bFlag = false;
+                    break;
+                }
             }
         }
         
         if (bFlag)
         {
-            answer = min(answer, cnt);
+            answer = Cnt;
         }
     }
     
-    return answer == N + M + 1 ? -1 : answer;
+    return answer == 30 ? -1 : answer;
 }
