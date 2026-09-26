@@ -3,18 +3,16 @@
 
 using namespace std;
 
+const int MOD = 1000000007;
+
 int solution(int n) {
-    if (n & 1)
-    {
-        return 0;
-    }
     vector<int> DP(n + 1);
     DP[0] = 1;
-    DP[2] = 3;
-    for (int i = 4; i <= n; i += 2)
+    int Pre = 0;
+    for (int i = 2; i <= n; i += 2)
     {
-        DP[i] = (4ll * DP[i - 2] - DP[i - 4] + 1000000007) % 1000000007;
+        DP[i] = (DP[i - 2] * 3ll + Pre * 2ll) % MOD;
+        Pre = (Pre + DP[i - 2]) % MOD;
     }
-    
-    return DP[n];
+    return DP.back();
 }
