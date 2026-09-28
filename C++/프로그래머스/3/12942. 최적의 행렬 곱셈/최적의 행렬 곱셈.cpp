@@ -3,31 +3,27 @@
 
 using namespace std;
 
-int Solve(int Start, int End, vector<vector<int>>& DP, const vector<vector<int>>& matrix_sizes)
+int Solve(vector<vector<int>>& DP, int Start, int End, const vector<vector<int>>& matrix_sizes)
 {
-    if (DP[Start][End] != 2100000000)
+    if (Start == End || DP[Start][End])
     {
-        return DP[Start][End];
-    }
-    if (Start == End)
-    {
-        DP[Start][End] = 0;
         return DP[Start][End];
     }
     
+    int Result = 123456789;
     for (int i = Start; i < End; i++)
     {
-        int Cost = Solve(Start, i, DP, matrix_sizes);
-        Cost += Solve(i + 1, End, DP, matrix_sizes);
-        Cost += matrix_sizes[Start][0] * matrix_sizes[i][1] * matrix_sizes[End][1];
-        DP[Start][End] = min(DP[Start][End], Cost);
+        int LeftCnt = Solve(DP, Start, i, matrix_sizes);
+        int RightCnt = Solve(DP, i + 1, End, matrix_sizes);
+        int Multiply = matrix_sizes[Start][0] * matrix_sizes[i][1] * matrix_sizes[End][1];
+        Result = min(Result, LeftCnt + RightCnt + Multiply);
     }
     
-    return DP[Start][End];
+    return DP[Start][End] = Result;
 }
 
 int solution(vector<vector<int>> matrix_sizes) {
     int N = matrix_sizes.size();
-    vector<vector<int>> DP(N, vector<int>(N, 2100000000));
-    return Solve(0, N - 1, DP, matrix_sizes);
+    vector<vector<int>> DP(N, vector<int>(N));
+    return Solve(DP, 0, N - 1, matrix_sizes);
 }
